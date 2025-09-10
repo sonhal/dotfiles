@@ -670,22 +670,33 @@ require('lazy').setup({
         vue_ls = {},
         clangd = {},
         gopls = {},
-        pylsp = {
-          cmd = { 'pylsp', '-vvv', '--log-file', '/tmp/lsp.log' },
-          settings = {
-            pylsp = {
-              plugins = {
-                ruff = {
-                  enabled = false, -- Enable the plugin
-                },
-                mypy = {
-                  enabled = true,
-                  follow_imports = 'skip',
-                },
-              },
+        -- pylsp = {
+        --   cmd = { 'pylsp', '-vvv', '--log-file', '/tmp/lsp.log' },
+        --   settings = {
+        --     pylsp = {
+        --       plugins = {
+        --         ruff = {
+        --           enabled = false, -- Enable the plugin
+        --         },
+        --         mypy = {
+        --           enabled = true,
+        --           follow_imports = 'skip',
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
+        pyright = {
+          -- Using Ruff's import organizer
+          disableOrganizeImports = true,
+          python = {
+            analysis = {
+              -- Ignore all files for analysis to exclusively use Ruff for linting
+              ignore = { '*' },
             },
           },
         },
+        ruff = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -695,7 +706,6 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
-
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -711,6 +721,22 @@ require('lazy').setup({
           },
         },
       }
+
+      -- Fix ruff and pyright collision
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client == nil then
+            return
+          end
+          if client.name == 'ruff' then
+            -- Disable hover in favor of Pyright
+            client.server_capabilities.hoverProvider = false
+          end
+        end,
+        desc = 'LSP: Disable hover capability from Ruff',
+      })
 
       -- The following loop will configure each server with the capabilities we defined above.
       -- This will ensure that all servers have the same base configuration, but also
