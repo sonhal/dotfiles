@@ -27,6 +27,12 @@
   opacity: 0.5;
 }
 
+/* Force remove hover shadow */
+#workspaces:hover {
+    background: inherit;
+    box-shadow:  0 0px #ffffff;
+}
+
 #tray,
 #cpu,
 #battery,
