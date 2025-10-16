@@ -31,6 +31,7 @@ Started by keybinds etc...
 
 - https://github.com/derailed/k9s
 - https://github.com/jesseduffield/lazydocker
+- https://github.com/junegunn/fzf (Required for shell)
 
 
 ## Zsh

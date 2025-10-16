@@ -76,3 +76,7 @@
     font-size: 16px;
 }
 
+#keyboard-state >*:not(:last-child) {
+    margin-right: 4px; 
+} 
+
