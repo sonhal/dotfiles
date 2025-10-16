@@ -23,7 +23,7 @@
         "temperature",
         "backlight",
         "keyboard-state",
-        "sway/language",
+        "hyprland/language",
         "battery",
         "battery#bat2",
         "clock",
@@ -206,5 +206,10 @@
 			"suspend": "systemctl suspend",
 			"hibernate": "systemctl hibernate"
 		}
+    },
+    "hyprland/language": {
+	"format": "{}",
+	"format-en": "US",
+	"format-no": "NO"
     }
 }
