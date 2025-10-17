@@ -91,3 +91,30 @@ alias dockimg='docker images'                                                   
 alias dockprune='docker system prune -a'                                        # prune everything
 alias dockceu='docker-compose run --rm -u $(id -u):$(id -g)'                    # run as the host user
 alias dockce='docker-compose run --rm'
+
+
+# +-------------+
+# | file system |
+# +-------------+
+alias ls='eza -lh --group-directories-first --icons=auto'
+alias lsa='ls -a'
+alias lt='eza --tree --level=2 --long --icons --git'
+alias lta='lt -a'
+alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+open() {
+  xdg-open "$@" >/dev/null 2>&1 &
+}
+
+
+# +-------------+
+# | directories |
+# +-------------+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+
+# +-------+
+# | tools |
+# +-------+
+n() { if [ "$#" -eq 0 ]; then nvim .; else nvim "$@"; fi; }
