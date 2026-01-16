@@ -1,9 +1,11 @@
 
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=100000
+SAVEHIST=100000
+setopt SHARE_HISTORY
 setopt autocd extendedglob notify
+setopt inc_append_history
 unsetopt beep
 bindkey -v
 bindkey '^R' history-incremental-search-backward
