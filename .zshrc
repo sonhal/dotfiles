@@ -39,6 +39,6 @@ fi
 # -----------------------
 
 # fzf search
-source <(fzf --zsh)
+source <(fzf --zsh) 2> /dev/null
 
 eval "$(starship init zsh)"

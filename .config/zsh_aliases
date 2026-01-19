@@ -72,6 +72,8 @@ alias gj="git-jump"                                                             
 
 alias dif="git diff --no-index"                                                                   # Diff two files even if not in git repo! Can add -w (don't diff whitespaces)
 
+alias lg="lazygit"
+
 # +------+
 # | tmux |
 # +------+
