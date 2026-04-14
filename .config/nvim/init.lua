@@ -345,7 +345,8 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
+        { '<leader>t', group = '[T]est' },
+        { '<leader>r', group = '[R]efactor', mode = { 'n', 'x' } },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -623,9 +624,9 @@ require('lazy').setup({
           --
           -- This may be unwanted, since they displace some of your code
           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
+            map('<leader>ih', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
+            end, 'Toggle [I]nlay [H]ints')
           end
         end,
       })
@@ -685,7 +686,19 @@ require('lazy').setup({
         },
         vtsls = {},
         clangd = {},
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              completeUnimported = true,
+              usePlaceholders = true,
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+              },
+              staticcheck = true,
+            },
+          },
+        },
         -- pylsp = {
         --   cmd = { 'pylsp', '-vvv', '--log-file', '/tmp/lsp.log' },
         --   settings = {
@@ -914,7 +927,7 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 200 },
       },
 
       sources = {
@@ -1004,70 +1017,30 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false,
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = {
-        'python',
-        'rust',
-        'go',
-        'javascript',
-        'bash',
-        'c',
-        'diff',
-        'html',
-        'lua',
-        'luadoc',
-        'markdown',
-        'markdown_inline',
-        'query',
-        'vim',
-        'vimdoc',
-        'cpp',
-        'desktop',
-        'editorconfig',
-        'fennel',
-        'git_config',
-        'gomod',
-        'graphql',
-        'helm',
-        'htmldjango',
-        'http',
-        'hyprlang',
-        'java',
-        'json',
-        'kotlin',
-        'llvm',
-        'make',
-        'proto',
-        'requirements',
-        'svelte',
-        'terraform',
-        'tmux',
-        'toml',
-        'tsv',
-        'typescript',
-        'vue',
-        'yaml',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = false,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    config = function()
+      -- Install parsers
+      require('nvim-treesitter').install {
+        'python', 'rust', 'go', 'javascript', 'bash', 'c', 'diff', 'html',
+        'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
+        'cpp', 'fennel', 'git_config', 'gomod',
+        'graphql', 'helm', 'htmldjango', 'http', 'hyprlang', 'java', 'json',
+        'kotlin', 'llvm', 'make', 'proto', 'requirements', 'svelte', 'terraform',
+        'tmux', 'toml', 'tsv', 'typescript', 'vue', 'yaml',
+      }
+
+      -- Enable treesitter highlighting and indentation for all installed parsers
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function()
+          pcall(vim.treesitter.start)
+          if vim.treesitter.get_parser(0, '', { error = false }) then
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
