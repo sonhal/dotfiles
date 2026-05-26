@@ -59,6 +59,19 @@ return {
     },
   },
   config = function()
+    vim.api.nvim_set_hl(0, 'DapBreakpoint', { fg = '#c23127' })
+    vim.api.nvim_set_hl(0, 'DapBreakpointCondition', { fg = '#e5ac00' })
+    vim.api.nvim_set_hl(0, 'DapBreakpointRejected', { fg = '#737373' })
+    vim.api.nvim_set_hl(0, 'DapLogPoint', { fg = '#61afef' })
+    vim.api.nvim_set_hl(0, 'DapStopped', { fg = '#98c379' })
+    vim.api.nvim_set_hl(0, 'DapStoppedLine', { bg = '#2e4d2e' })
+
+    vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DapBreakpoint' })
+    vim.fn.sign_define('DapBreakpointCondition', { text = '◐', texthl = 'DapBreakpointCondition' })
+    vim.fn.sign_define('DapBreakpointRejected', { text = '○', texthl = 'DapBreakpointRejected' })
+    vim.fn.sign_define('DapLogPoint', { text = '◆', texthl = 'DapLogPoint' })
+    vim.fn.sign_define('DapStopped', { text = '▶', texthl = 'DapStopped', linehl = 'DapStoppedLine' })
+
     local dap = require 'dap'
 
     dap.defaults.fallback.switchbuf = 'usevisible,usetab,newtab'
