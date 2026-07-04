@@ -712,11 +712,23 @@ require('lazy').setup({
             gopls = {
               completeUnimported = true,
               usePlaceholders = true,
+              gofumpt = true,
+              semanticTokens = true,
               analyses = {
                 unusedparams = true,
                 shadow = true,
+                nilness = true,
+                unusedwrite = true,
+                useany = true,
               },
               staticcheck = true,
+              codelenses = {
+                generate = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                run_govulncheck = true,
+              },
               templateExtensions = { 'gohtml', 'gotmpl', 'tmpl', 'html' },
               hints = {
                 assignVariableTypes = true,
@@ -869,6 +881,14 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'goimports', -- Go formatter that manages imports
+        'gofumpt', -- Stricter gofmt
+        'gotestsum', -- Test runner used by neotest-golang
+        'golangci-lint', -- Go linter aggregator
+        'gomodifytags', -- Struct tag editing (gopher.nvim)
+        'impl', -- Interface stub generation (gopher.nvim)
+        'iferr', -- if err != nil generation (gopher.nvim)
+        'gotests', -- Table-driven test generation (gopher.nvim)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -923,6 +943,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'ruff_fix', 'ruff_format' },
+        go = { 'goimports', 'gofumpt' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
@@ -1118,7 +1139,9 @@ require('lazy').setup({
         'fennel',
         'git_config',
         'gomod',
+        'gosum',
         'gotmpl',
+        'gowork',
         'graphql',
         'helm',
         'htmldjango',
@@ -1163,7 +1186,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps

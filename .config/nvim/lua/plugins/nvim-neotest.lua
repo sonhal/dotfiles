@@ -95,9 +95,12 @@ return {
             dap = { justMyCode = false },
           },
           require 'neotest-vim-test' {
-            ignore_file_types = { 'python', 'vim', 'lua' },
+            ignore_file_types = { 'python', 'vim', 'lua', 'go' },
           },
-          require 'neotest-golang',
+          require 'neotest-golang' {
+            runner = 'gotestsum',
+            go_test_args = { '-v', '-race', '-count=1' },
+          },
         },
       }
     end,
