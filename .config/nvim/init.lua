@@ -633,6 +633,12 @@ require('lazy').setup({
             map('<leader>ih', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, 'Toggle [I]nlay [H]ints')
+
+            -- Enable inlay hints by default for these filetypes
+            local hint_filetypes = { python = true, go = true }
+            if hint_filetypes[vim.bo[event.buf].filetype] then
+              vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+            end
           end
         end,
       })
@@ -712,6 +718,15 @@ require('lazy').setup({
               },
               staticcheck = true,
               templateExtensions = { 'gohtml', 'gotmpl', 'tmpl', 'html' },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
             },
           },
         },
@@ -731,14 +746,58 @@ require('lazy').setup({
         --     },
         --   },
         -- },
-        pyright = {
+        -- basedpyright is the open-source fork of pyright; unlike pyright it
+        -- provides inlay hints (inferred types, return types, arg names).
+        basedpyright = {
+          -- Point basedpyright at the project's virtualenv so imports resolve.
+          -- Checks $VIRTUAL_ENV, then walks up from the root looking for a venv.
+          before_init = function(_, config)
+            local venv = vim.env.VIRTUAL_ENV
+            if not venv then
+              local start = config.root_dir or vim.fn.getcwd()
+              local dir = start
+              while dir and dir ~= '' do
+                for _, name in ipairs { '.venv', 'venv', 'env' } do
+                  local candidate = dir .. '/' .. name
+                  if vim.fn.filereadable(candidate .. '/bin/python') == 1 then
+                    venv = candidate
+                    break
+                  end
+                end
+                if venv then
+                  break
+                end
+                local parent = vim.fn.fnamemodify(dir, ':h')
+                if parent == dir then
+                  break
+                end
+                dir = parent
+              end
+            end
+            if venv then
+              config.settings = config.settings or {}
+              config.settings.python = config.settings.python or {}
+              config.settings.python.pythonPath = venv .. '/bin/python'
+              config.settings.python.venvPath = vim.fn.fnamemodify(venv, ':h')
+              config.settings.python.venv = vim.fn.fnamemodify(venv, ':t')
+            end
+          end,
           settings = {
-            pyright = {
+            basedpyright = {
+              -- Let Ruff handle import organization
               disableOrganizeImports = true,
             },
             python = {
               analysis = {
-                ignore = { '*' },
+                typeCheckingMode = 'basic',
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'openFilesOnly',
+                inlayHints = {
+                  variableTypes = true,
+                  functionReturnTypes = true,
+                  callArgumentNames = true,
+                },
               },
             },
           },
