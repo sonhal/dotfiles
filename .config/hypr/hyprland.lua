@@ -40,12 +40,24 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("swaync")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("hyprpaper")
+    hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd(terminal)
     hl.exec_cmd(browser)
 
     hl.exec_cmd("wl-paste --type text --watch cliphist store")  -- Stores only text data
     hl.exec_cmd("wl-paste --type image --watch cliphist store") -- Stores only image data
 end)
+
+---------------------
+---- PERMISSIONS ----
+---------------------
+
+-- See https://wiki.hypr.land/configuring/core/advanced-configuration/permissions/
+-- Not reloaded on-the-fly; requires a Hyprland restart.
+hl.config({ ecosystem = { enforce_permissions = true } })
+hl.permission({ binary = "/usr/(bin|local/bin)/(grim|hyprshot)",                type = "screencopy", mode = "allow" })
+hl.permission({ binary = "/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", type = "screencopy", mode = "allow" })
+hl.permission({ binary = "/usr/bin/hyprctl",                                     type = "plugin",     mode = "deny" })
 
 -----------------------
 ---- LOOK AND FEEL ----
@@ -111,11 +123,24 @@ hl.config({
         new_status = "master",
     },
 
+    binds = {
+        workspace_back_and_forth = true, -- SUPER+N on workspace N jumps back to the previous one
+        allow_workspace_cycles   = true,
+    },
+
     misc = {
         force_default_wallpaper = 0,
         disable_hyprland_logo   = true,
         disable_splash_rendering = true,
         focus_on_activate       = true,
+    },
+
+    xwayland = {
+        force_zero_scaling = true,
+    },
+
+    ecosystem = {
+        no_update_news = true, -- Don't show update news on first launch
     },
 })
 
@@ -125,11 +150,12 @@ hl.curve("easeInOutCubic", { type = "bezier", points = { { 0.65, 0.05 }, { 0.36,
 hl.curve("linear",         { type = "bezier", points = { { 0, 0 },       { 1, 1 }     } })
 hl.curve("almostLinear",   { type = "bezier", points = { { 0.5, 0.5 },   { 0.75, 1.0 } } })
 hl.curve("quick",          { type = "bezier", points = { { 0.15, 0 },    { 0.1, 1 }   } })
+hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
 
 hl.animation({ leaf = "global",        enabled = true, speed = 10,   bezier = "default" })
 hl.animation({ leaf = "border",        enabled = true, speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows",       enabled = true, speed = 4.79, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windowsIn",     enabled = true, speed = 4.1,  bezier = "easeOutQuint", style = "popin 87%" })
+hl.animation({ leaf = "windows",       enabled = true, speed = 4.79, spring = "easy" })
+hl.animation({ leaf = "windowsIn",     enabled = true, speed = 4.1,  spring = "easy",         style = "popin 87%" })
 hl.animation({ leaf = "windowsOut",    enabled = true, speed = 1.49, bezier = "linear",       style = "popin 87%" })
 hl.animation({ leaf = "fadeIn",        enabled = true, speed = 1.73, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.46, bezier = "almostLinear" })
@@ -142,6 +168,7 @@ hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "a
 hl.animation({ leaf = "workspaces",    enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 1.21, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 7,    bezier = "quick" })
 
 ---------------
 ---- INPUT ----
@@ -171,31 +198,39 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Applications
-hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(terminal .. " -e nvim"))
-hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(terminal .. " -e btop"))
-hl.bind(mainMod .. " + F",         hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + D",         hl.dsp.exec_cmd(terminal .. " -e lazydocker"))
-hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.exec_cmd(terminal .. " -e k9s"))
-hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger))
+hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(terminal .. " -e nvim"), { description = "Neovim" })
+hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(browser), { description = "Browser" })
+hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "btop" })
+hl.bind(mainMod .. " + D",         hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "lazydocker" })
+hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.exec_cmd(terminal .. " -e k9s"), { description = "k9s" })
+hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger), { description = "Signal" })
 
 -- Clipboard
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"))
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"), { description = "Clipboard history" })
 
 -- See https://wiki.hypr.land/configuring/core/binds/ for more
-hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + C",         hl.dsp.window.close())
-hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
-hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo())         -- dwindle
-hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"))   -- dwindle
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal), { description = "Terminal" })
+hl.bind(mainMod .. " + C",         hl.dsp.window.close(), { description = "Close window" })
+hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"), { description = "Exit Hyprland" })
+hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager), { description = "File manager" })
+hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
+hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen(), { description = "Fullscreen" })
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Maximize" })
+hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(menu), { description = "App launcher" })
+hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo(), { description = "Pseudotile" })         -- dwindle
+hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"), { description = "Toggle split" })   -- dwindle
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("hyprlock"), { description = "Lock screen" })
 
 -- Screenshot
-hl.bind(mainMod .. " + X",       hl.dsp.exec_cmd("hyprshot -m region"))
-hl.bind(mainMod .. " + ALT + X", hl.dsp.exec_cmd("hyprshot -m window"))
+hl.bind(mainMod .. " + X",       hl.dsp.exec_cmd("hyprshot -m region"), { description = "Screenshot region" })
+hl.bind(mainMod .. " + ALT + X", hl.dsp.exec_cmd("hyprshot -m window"), { description = "Screenshot window" })
+
+-- Keybind cheatsheet from bind descriptions
+hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd(
+    [[hyprctl -j binds | jq -r '.[] | select(.has_description) | ({"0":"","64":"SUPER","65":"SUPER+SHIFT","72":"SUPER+ALT"}[.modmask|tostring] // (.modmask|tostring)) as $m | "\($m) + \(.key)\t\(.description)"' | column -ts $'\t' | rofi -dmenu -i -p keys]]
+), { description = "Show keybinds" })
+
+hl.bind(mainMod .. " + Tab", hl.dsp.focus({ last = true }), { description = "Last window" })
 
 -- Move focus with mainMod + arrow keys / vim keys
 -- Move active window inside workspace with mainMod + SHIFT + vim keys
@@ -212,6 +247,23 @@ for _, d in ipairs(directions) do
     hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }))
 end
 
+-- Resize mode: mainMod + R, then hjkl / arrows, Escape or Return to leave
+hl.bind(mainMod .. " + R", hl.dsp.submap("resize"), { description = "Resize mode" })
+hl.define_submap("resize", function()
+    for _, d in ipairs({
+        { keys = { "left", "h" },  x = -20, y = 0 },
+        { keys = { "right", "l" }, x = 20,  y = 0 },
+        { keys = { "up", "k" },    x = 0,   y = -20 },
+        { keys = { "down", "j" },  x = 0,   y = 20 },
+    }) do
+        for _, key in ipairs(d.keys) do
+            hl.bind(key, hl.dsp.window.resize({ x = d.x, y = d.y, relative = true }), { repeating = true })
+        end
+    end
+    hl.bind("escape", hl.dsp.submap("reset"))
+    hl.bind("return", hl.dsp.submap("reset"))
+end)
+
 -- Switch workspaces with mainMod + [0-9] / F1-F12
 -- Move active window to a workspace with mainMod + SHIFT + [0-9] / F1-F12
 for i = 1, 10 do
@@ -225,8 +277,8 @@ for i = 1, 12 do
 end
 
 -- Special workspace (scratchpad)
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"), { description = "Toggle scratchpad" })
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }), { description = "Move to scratchpad" })
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))

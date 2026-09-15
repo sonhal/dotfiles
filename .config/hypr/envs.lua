@@ -25,16 +25,6 @@ hl.env("GTK_USE_PORTAL", "1")
 -- Use XCompose file
 hl.env("XCOMPOSEFILE", os.getenv("HOME") .. "/.XCompose")
 
-hl.config({
-    xwayland = {
-        force_zero_scaling = true,
-    },
-    ecosystem = {
-        -- Don't show update news on first launch
-        no_update_news = true,
-    },
-})
-
 -- Dark mode gsettings
 hl.on("hyprland.start", function()
     hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'")
