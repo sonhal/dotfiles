@@ -4,7 +4,7 @@
     // "position": "bottom", // Waybar position (top|bottom|left|right)
     "height": 30, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
-    "spacing": 4, // Gaps between modules (4px)
+    "spacing": 0, // Gaps handled by per-module padding/margin in style.css
     // Choose the order of the modules
     "modules-left": [
         "hyprland/workspaces",
@@ -33,10 +33,11 @@
      "hyprland/workspaces": {
          "disable-scroll": true,
          "warp-on-scroll": false,
-         "format": "{name}: {icon}",
+         "format": "{name} {icon}",
          "format-icons": {
              "urgent": "",
              "active": "",
+             "visible": "", // active on another monitor
              "default": ""
          }
      },
