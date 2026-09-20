@@ -139,8 +139,6 @@ md() {
     # --app = normal window (tiles like any other) but no tabs/address bar/toolbars
     if command -v chromium >/dev/null 2>&1; then
       chromium --app="file://$out" >/dev/null 2>&1 &
-    elif command -v firefox >/dev/null 2>&1; then
-      firefox --kiosk "file://$out" >/dev/null 2>&1 &
     else
       open "$out"
     fi
