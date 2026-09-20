@@ -192,10 +192,10 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -213,12 +213,12 @@ end, { desc = 'Copy file path to clipboard' })
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
+--  See `:help vim.hl.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
 })
 
@@ -367,6 +367,7 @@ require('lazy').setup({
         { '<leader>r', group = '[R]efactor', mode = { 'n', 'x' } },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>l', group = '[L]aunch' },
+        { '<leader>j', group = '[J]ava', mode = { 'n', 'v' } },
       },
     },
   },
@@ -679,14 +680,8 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        jdtls = {},
-        vue_ls = {
-          init_options = {
-            vue = {
-              hybridMode = true,
-            },
-          },
-        },
+        -- jdtls is started by nvim-jdtls from ftplugin/java.lua, not lspconfig
+        vue_ls = {},
         vtsls = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
           settings = {
@@ -815,7 +810,7 @@ require('lazy').setup({
           },
         },
         ruff = {},
-        rust_analyzer = {},
+        -- rust_analyzer is started by rustaceanvim (lua/plugins/rustaceanvim.lua), not lspconfig
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -881,6 +876,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'jdtls', -- Java LSP, launched by nvim-jdtls
+        'java-debug-adapter', -- Java DAP bundle (nvim-jdtls)
+        'java-test', -- JUnit/TestNG runner bundle (nvim-jdtls)
+        'rust-analyzer', -- Rust LSP, launched by rustaceanvim
+        'markdownlint-cli2', -- Markdown linter (nvim-lint)
         'goimports', -- Go formatter that manages imports
         'gofumpt', -- Stricter gofmt
         'gotestsum', -- Test runner used by neotest-golang
@@ -1042,7 +1042,7 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'rust' },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },

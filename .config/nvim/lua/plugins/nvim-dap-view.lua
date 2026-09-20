@@ -80,6 +80,7 @@ return {
       automatic_installation = true,
       handlers = {
         delve = function() end,
+        python = function() end, -- configured by nvim-dap-python below
       },
       ensure_installed = {
         'delve',
@@ -107,6 +108,6 @@ return {
         output_mode = 'remote',
       },
     }
-    require('dap-python').setup 'python3'
+    require('dap-python').setup(vim.fn.stdpath 'data' .. '/mason/packages/debugpy/venv/bin/python')
   end,
 }

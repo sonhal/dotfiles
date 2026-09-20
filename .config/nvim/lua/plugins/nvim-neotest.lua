@@ -6,7 +6,8 @@ return {
       'nvim-lua/plenary.nvim',
       'antoinemadec/FixCursorHold.nvim',
       'nvim-neotest/neotest-python',
-      'nvim-neotest/neotest-vim-test',
+      'marilari88/neotest-vitest',
+      'mrcjkb/rustaceanvim',
       'nvim-treesitter/nvim-treesitter',
       {
         'fredrikaverpil/neotest-golang', -- Installation
@@ -94,9 +95,8 @@ return {
           require 'neotest-python' {
             dap = { justMyCode = false },
           },
-          require 'neotest-vim-test' {
-            ignore_file_types = { 'python', 'vim', 'lua', 'go' },
-          },
+          require 'neotest-vitest',
+          require 'rustaceanvim.neotest',
           require 'neotest-golang' {
             runner = 'gotestsum',
             go_test_args = { '-v', '-race', '-count=1' },
