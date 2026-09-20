@@ -1,9 +1,16 @@
 @define-color foreground #d8dee9;
 @define-color background #2e3440;
-* {
-    font-family: "JetBrainsMono Nerd Font", "Font Awesome 7 Free", sans-serif;
-    font-size: 13px;
+@define-color urgent #bf616a;
+
+/* Background lives on the window only. Painting it on every widget via `*`
+ * makes child labels opaque, which covers the button's own decoration. */
+window#waybar {
   background-color: @background;
+}
+
+* {
+  font-family: "JetBrainsMono Nerd Font", "Font Awesome 7 Free", sans-serif;
+  font-size: 13px;
   color: @foreground;
 }
 
@@ -15,32 +22,30 @@
   margin-right: 8px;
 }
 
+/* ext/workspaces exposes only .active, .urgent and .hidden.
+ * Underline via border-bottom (not box-shadow) so no child can cover it;
+ * transparent on inactive buttons so nothing shifts on state change. */
 #workspaces button {
   font-family: "JetBrainsMono Nerd Font Mono";
   background: none;
   border: none;
+  border-bottom: 2px solid transparent;
   border-radius: 0;
   box-shadow: none;
   padding: 0 8px;
   margin: 0 2px;
 }
 
-#workspaces button.empty {
-  opacity: 0.5;
+#workspaces button:hover {
+  border-bottom-color: alpha(@foreground, 0.4);
 }
 
 #workspaces button.active {
-  box-shadow: inset 0 -2px @foreground;
+  border-bottom-color: @foreground;
 }
 
-#workspaces button.visible {
-  box-shadow: inset 0 -2px alpha(@foreground, 0.4);
-}
-
-/* Force remove hover shadow */
-#workspaces:hover {
-    background: inherit;
-    box-shadow:  0 0px #ffffff;
+#workspaces button.urgent {
+  border-bottom-color: @urgent;
 }
 
 #tray,
@@ -59,11 +64,29 @@
 #custom-power {
   padding: 0 8px;
   margin: 0 2px;
+  border-bottom: 1px solid transparent;
 }
 
-:hover {
-    background: inherit;
-    box-shadow: inset 0 -1px #ffffff;
+#tray:hover,
+#cpu:hover,
+#battery:hover,
+#network:hover,
+#pulseaudio:hover,
+#clock:hover,
+#memory:hover,
+#keyboard-state:hover,
+#hyprland-language:hover,
+#temperature:hover,
+#backlight:hover,
+#idle_inhibitor:hover,
+#power-profiles-daemon:hover,
+#custom-power:hover {
+  border-bottom-color: @foreground;
+}
+
+tooltip {
+  background-color: @background;
+  border: 1px solid alpha(@foreground, 0.3);
 }
 
 #tooltip {
@@ -71,10 +94,9 @@
 }
 
 #custom-power {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 #keyboard-state >*:not(:last-child) {
-    margin-right: 4px; 
-} 
-
+  margin-right: 4px;
+}
