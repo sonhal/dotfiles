@@ -281,9 +281,14 @@ hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"), { d
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }), { description = "Move to scratchpad" })
 hl.bind(mainMod .. " + grave",     hl.dsp.focus({ workspace = "previous" }), { description = "Previous workspace" })
 
--- Scroll through existing workspaces with mainMod + scroll
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+-- Cycle through existing workspaces with mainMod + scroll / bracketleft/bracketright
+-- Move active window to the next/previous existing workspace with mainMod + SHIFT + brackets
+hl.bind(mainMod .. " + mouse_down",           hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up",             hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + bracketright",         hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
+hl.bind(mainMod .. " + bracketleft",          hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace (cycle)" })
+hl.bind(mainMod .. " + SHIFT + bracketright", hl.dsp.window.move({ workspace = "e+1" }), { description = "Move window to next workspace" })
+hl.bind(mainMod .. " + SHIFT + bracketleft",  hl.dsp.window.move({ workspace = "e-1" }), { description = "Move window to previous workspace" })
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
