@@ -121,3 +121,28 @@ alias ....='cd ../../..'
 # | tools |
 # +-------+
 n() { if [ "$#" -eq 0 ]; then nvim .; else nvim "$@"; fi; }
+
+# +----------+
+# | markdown |
+# +----------+
+# Render a markdown file to HTML (dark theme) and open it in a chromeless browser window.
+# Requires pandoc (pacman -S pandoc-cli).
+md() {
+  if [ "$#" -eq 0 ]; then echo "usage: md <file.md> [more.md ...]" >&2; return 1; fi
+  if ! command -v pandoc >/dev/null 2>&1; then echo "md: pandoc not found (pacman -S pandoc-cli)" >&2; return 1; fi
+  local f out css="${XDG_CONFIG_HOME:-$HOME/.config}/md/dark.css"
+  for f in "$@"; do
+    [ -f "$f" ] || { echo "md: no such file: $f" >&2; continue; }
+    out="${TMPDIR:-/tmp}/md-$(basename "${f%.*}")-$$.html"
+    pandoc -s -f gfm -t html --metadata title="$(basename "$f")" \
+      --css "$css" --syntax-highlighting zenburn -o "$out" "$f" || continue
+    # --app = normal window (tiles like any other) but no tabs/address bar/toolbars
+    if command -v chromium >/dev/null 2>&1; then
+      chromium --app="file://$out" >/dev/null 2>&1 &
+    elif command -v firefox >/dev/null 2>&1; then
+      firefox --kiosk "file://$out" >/dev/null 2>&1 &
+    else
+      open "$out"
+    fi
+  done
+}
