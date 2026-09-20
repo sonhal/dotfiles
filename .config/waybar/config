@@ -7,7 +7,9 @@
     "spacing": 0, // Gaps handled by per-module padding/margin in style.css
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces",
+        // ext-workspace-v1 protocol. hyprland/workspaces click-to-switch is broken:
+        // it sends legacy "dispatch workspace N" IPC, which Hyprland's Lua config rejects.
+        "ext/workspaces"
     ],
     "modules-center": [
         "hyprland/window"
@@ -30,17 +32,16 @@
         "tray",
         "custom/power"
     ],
-     "hyprland/workspaces": {
-         "disable-scroll": true,
-         "warp-on-scroll": false,
-         "format": "{name} {icon}",
-         "format-icons": {
-             "urgent": "",
-             "active": "",
-             "visible": "", // active on another monitor
-             "default": ""
-         }
-     },
+    "ext/workspaces": {
+        "on-click": "activate",
+        "sort-by-id": true,
+        "format": "{name} {icon}",
+        "format-icons": {
+            "urgent": "",
+            "active": "",
+            "default": ""
+        }
+    },
     "keyboard-state": {
         "numlock": true,
         "capslock": true,
