@@ -84,11 +84,19 @@ alias tmuxl='tmux list-sessions'
 
 # tp <profile> [name] [dir]: create a session from ~/.config/tmux/profiles/<profile>.conf
 # (or attach to it if it already exists). tp alone lists the profiles.
+# tp <profile> <dir> names the session after the directory.
 tp() {
   local dir=~/.config/tmux/profiles
   if [[ -z $1 ]]; then ls $dir | sed 's/\.conf$//'; return; fi
   local file=$dir/$1.conf name=${2:-$1} cwd=${3:-$PWD}
   [[ -f $file ]] || { echo "tp: no profile '$1'" >&2; return 1; }
+  if [[ -d $2 && -z $3 ]]; then
+    cwd=$(cd -- "$2" && pwd) || return
+    name=${cwd##*/}; name=${name:-$1}  # / has no basename
+  elif [[ $2 == */* ]]; then
+    echo "tp: no directory '$2'" >&2; return 1
+  fi
+  name=${name//[.:]/_}  # tmux turns . and : in session names into _
 
   if ! tmux has-session -t "=$name" 2>/dev/null; then
     tmux start-server \; \
