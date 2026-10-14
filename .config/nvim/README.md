@@ -48,7 +48,7 @@ Workflow:
 
 | Package | Why |
 |---|---|
-| `tmux` | The launch runner (vimux) and pane navigation (vim-tmux-navigator) run inside tmux. |
+| `tmux` | The launch runner (vimux) and pane navigation and resizing (smart-splits.nvim) run inside tmux. |
 | `wl-clipboard` | System clipboard on Wayland for `clipboard = unnamedplus`. Use `xclip` on X11. |
 | `fd` | Optional. Faster file listing for Telescope's find-files. |
 
