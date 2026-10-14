@@ -13,6 +13,8 @@ unsetopt beep
 bindkey -v
 bindkey '^R' history-incremental-search-backward
 bindkey -v '^?' backward-delete-char
+KEYTIMEOUT=1 # 10ms wait after Esc in vi mode instead of the default 400ms
+stty -ixon   # free Ctrl-S (tmux prefix) from XON/XOFF flow control so it can't freeze the terminal
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '${HOME}/.zshrc'
@@ -47,6 +49,11 @@ if [[ -f /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substri
   . /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
   bindkey '^[[A' history-substring-search-up
   bindkey '^[[B' history-substring-search-down
+  # Home-row alternatives to the arrow keys
+  bindkey '^P' history-substring-search-up
+  bindkey '^N' history-substring-search-down
+  bindkey -M vicmd 'k' history-substring-search-up
+  bindkey -M vicmd 'j' history-substring-search-down
 fi
 # -----------------------
 

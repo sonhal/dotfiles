@@ -26,6 +26,7 @@ pcall(require, "monitors")
 ---------------------
 
 local terminal    = "kitty"
+local terminalTmux = terminal .. " -e tmux new-session -A -s main" -- attach to "main", create it if missing
 local fileManager = "dolphin"
 local menu        = "rofi -show drun -show-icons"
 local browser     = "firefox"
@@ -41,7 +42,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle")
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
-    hl.exec_cmd(terminal)
+    hl.exec_cmd(terminalTmux)
     hl.exec_cmd(browser)
 
     hl.exec_cmd("wl-paste --type text --watch cliphist store")  -- Stores only text data
@@ -176,8 +177,11 @@ hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 7,    bezier = "q
 
 hl.config({
     input = {
-        kb_layout  = "us,no",
-        kb_options = "grp:alt_shift_toggle",
+        -- US layout everywhere; æ ø å via AltGr (Right Alt) + z / l / w, add Shift for Æ Ø Å
+        kb_layout  = "us",
+        kb_variant = "altgr-intl",
+        -- Caps Lock acts as Ctrl, Right Ctrl is the Compose key used by ~/.XCompose
+        kb_options = "caps:ctrl_modifier,compose:rctrl",
 
         follow_mouse = 1,
 
@@ -202,16 +206,17 @@ hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(terminal .. " -e nvim"), { de
 hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(browser), { description = "Browser" })
 hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "btop" })
 hl.bind(mainMod .. " + D",         hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "lazydocker" })
-hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.exec_cmd(terminal .. " -e k9s"), { description = "k9s" })
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e k9s"), { description = "k9s" })
 hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger), { description = "Signal" })
 
 -- Clipboard
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"), { description = "Clipboard history" })
 
 -- See https://wiki.hypr.land/configuring/core/binds/ for more
-hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal), { description = "Terminal" })
-hl.bind(mainMod .. " + C",         hl.dsp.window.close(), { description = "Close window" })
-hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"), { description = "Exit Hyprland" })
+hl.bind(mainMod .. " + return",         hl.dsp.exec_cmd(terminalTmux), { description = "Terminal (tmux session main)" })
+hl.bind(mainMod .. " + SHIFT + return", hl.dsp.exec_cmd(terminal), { description = "Terminal (plain)" })
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.window.close(), { description = "Close window" })
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"), { description = "Exit Hyprland" })
 hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager), { description = "File manager" })
 hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
 hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen(), { description = "Fullscreen" })
@@ -219,7 +224,7 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized"
 hl.bind(mainMod .. " + SPACE",     hl.dsp.exec_cmd(menu), { description = "App launcher" })
 hl.bind(mainMod .. " + P",         hl.dsp.window.pseudo(), { description = "Pseudotile" })         -- dwindle
 hl.bind(mainMod .. " + O",         hl.dsp.layout("togglesplit"), { description = "Toggle split" })   -- dwindle
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd("hyprlock"), { description = "Lock screen" })
+hl.bind(mainMod .. " + escape",    hl.dsp.exec_cmd("hyprlock"), { description = "Lock screen" })
 
 -- Screenshot
 hl.bind(mainMod .. " + X",       hl.dsp.exec_cmd("hyprshot -m region"), { description = "Screenshot region" })
@@ -241,10 +246,9 @@ local directions = {
     { keys = { "down", "j" },  direction = "down" },
 }
 for _, d in ipairs(directions) do
-    for _, key in ipairs(d.keys) do
-        hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = d.direction }))
-    end
-    hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }))
+    hl.bind(mainMod .. " + " .. d.keys[1], hl.dsp.focus({ direction = d.direction }))
+    hl.bind(mainMod .. " + " .. d.keys[2], hl.dsp.focus({ direction = d.direction }), { description = "Focus " .. d.direction })
+    hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }), { description = "Swap window " .. d.direction })
 end
 
 -- Resize mode: mainMod + R, then hjkl / arrows, Escape or Return to leave
@@ -268,8 +272,8 @@ end)
 -- Move active window to a workspace with mainMod + SHIFT + [0-9] / F1-F12
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,            hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key,    hl.dsp.window.move({ workspace = i }))
+    hl.bind(mainMod .. " + " .. key,            hl.dsp.focus({ workspace = i }),       { description = "Workspace " .. i })
+    hl.bind(mainMod .. " + SHIFT + " .. key,    hl.dsp.window.move({ workspace = i }), { description = "Move window to workspace " .. i })
 end
 for i = 1, 12 do
     hl.bind(mainMod .. " + F" .. i,             hl.dsp.focus({ workspace = 10 + i }))

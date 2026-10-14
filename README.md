@@ -35,6 +35,15 @@ Started by keybinds etc...
 - https://eza.rocks/ (Required for shell aliases)
 
 
+## Keyboard
+
+Set up for touch typing on an ANSI keyboard (see `input` in `.config/hypr/hyprland.lua`):
+
+- Layout `us` with the `altgr-intl` variant: AltGr (Right Alt) + `z` / `l` / `w` types `æ` / `ø` / `å`, add Shift for capitals.
+- Caps Lock is an extra Ctrl, for the tmux prefix (`C-s`) and `C-hjkl` pane navigation.
+- Right Ctrl is the Compose key for the sequences in `.XCompose`.
+- `SUPER + /` lists every Hyprland keybind that has a description.
+
 ## Zsh
 
 ### Plugins
