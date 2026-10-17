@@ -3,9 +3,21 @@
 ## Note
 Intended for an Arch linux install with hyprland.
 
-Run `./check.sh` to see if the fonts the configs expect are installed; `./check.sh --kitty` also
+Run `./check.sh` to see if the fonts and packages the configs expect are installed; `./check.sh --kitty` also
 starts kitty briefly to check which font it actually loads.
 
+
+## Login
+
+Package: `ly` (TUI greeter). Enable it on tty2 (its unit conflicts with `getty@tty2`, so no need
+to disable that):
+
+```sh
+sudo systemctl enable ly@tty2.service
+```
+
+Pick the `Hyprland (uwsm-managed)` session; ly remembers it. `.zprofile` only autostarts Hyprland
+on a plain tty login, so the other ttys still work as a fallback.
 
 ## Clipboard manager
 
