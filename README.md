@@ -63,15 +63,19 @@ Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` 
 
 ## Fonts
 
-Packages: `ttf-lilex` (AUR), `ttf-jetbrains-mono-nerd`, `otf-font-awesome`, `noto-fonts`.
+Packages: `ttf-lilex` (AUR), `inter-font`, `ttf-nerd-fonts-symbols`, `noto-fonts`.
 
 - kitty uses plain Lilex, not a Nerd Font: kitty's FAQ advises against patched fonts, and kitty
   ships its own Nerd Font symbols, which `kitty.conf` pins the icon code points to (Nerd Fonts
   v3.5 ranges).
 - kitty only accepts fonts fontconfig marks as monospace. Lilex Medium and SemiBold are not (a few
   glyphs have stray widths), so stick to Regular/Bold.
-- Waybar text uses JetBrainsMono Nerd Font, with Font Awesome as icon fallback.
-- UI text (GTK, hyprlock) uses Noto Sans.
+- Waybar text uses Inter with fixed-width digits (`tnum`); icons come from Symbols Nerd Font, so
+  they must use Nerd Font code points (Nerd Fonts v3 has the newer Font Awesome icons under
+  `nf-fa-*`, not at Font Awesome's own code points).
+- UI text uses Inter: GTK (set in nwg-look), hyprlock, and `fontconfig/fonts.conf` makes it the
+  default `sans-serif` for everything else (Qt, browsers). Symlink `fontconfig/` into
+  `~/.config`. Noto Sans stays installed as the fallback for characters Inter lacks.
 
 
 ## Key packages

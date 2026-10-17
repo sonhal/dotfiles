@@ -9,7 +9,9 @@ window#waybar {
 }
 
 * {
-  font-family: "JetBrainsMono Nerd Font", "Font Awesome 7 Free", sans-serif;
+  /* Inter for text; icons come from the Nerd Font symbols, other symbols from Noto */
+  font-family: "Inter", "Symbols Nerd Font", "Noto Sans";
+  font-feature-settings: "tnum"; /* fixed-width digits so changing numbers don't shift the bar */
   font-size: 13px;
   color: @foreground;
 }
@@ -26,7 +28,6 @@ window#waybar {
  * Underline via border-bottom (not box-shadow) so no child can cover it;
  * transparent on inactive buttons so nothing shifts on state change. */
 #workspaces button {
-  font-family: "JetBrainsMono Nerd Font Mono";
   background: none;
   border: none;
   border-bottom: 2px solid transparent;

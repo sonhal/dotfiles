@@ -10,11 +10,10 @@ fail() { printf '  \033[31m✘\033[0m %s\n' "$1"; failed=1; }
 
 # family | styles (comma separated, empty = any) | monospace (yes/no) | package hint | used by
 fonts='
-Lilex|Regular,Bold,Italic,Bold Italic|yes|ttf-lilex (AUR)|kitty
-JetBrainsMono Nerd Font||no|ttf-jetbrains-mono-nerd|waybar
-JetBrainsMono Nerd Font Mono||no|ttf-jetbrains-mono-nerd|waybar
-Font Awesome 7 Free||no|otf-font-awesome|waybar
-Noto Sans|Regular,Light|no|noto-fonts|gtk, hyprlock
+Lilex|Regular,Bold,Italic,Bold Italic|yes|ttf-lilex (AUR)|kitty, md
+Inter|Regular,Light|no|inter-font|gtk, hyprlock, waybar, sans-serif
+Symbols Nerd Font||no|ttf-nerd-fonts-symbols|waybar icons
+Noto Sans||no|noto-fonts|fallback
 '
 
 check_font() {
