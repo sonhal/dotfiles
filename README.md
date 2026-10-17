@@ -61,8 +61,6 @@ Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` 
 ## Key packages
 Started by keybinds etc...
 
-- https://github.com/derailed/k9s
-- https://github.com/jesseduffield/lazydocker
 - https://github.com/junegunn/fzf (Required for shell)
 - https://eza.rocks/ (Required for shell aliases)
 - https://github.com/sharkdp/bat (Required for the `ff` alias)

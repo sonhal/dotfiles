@@ -203,8 +203,6 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + N",         hl.dsp.exec_cmd(terminal .. " -e nvim"), { description = "Neovim" })
 hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(browser), { description = "Browser" })
 hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(terminal .. " -e btop"), { description = "btop" })
-hl.bind(mainMod .. " + D",         hl.dsp.exec_cmd(terminal .. " -e lazydocker"), { description = "lazydocker" })
-hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.exec_cmd(terminal .. " -e k9s"), { description = "k9s" })
 hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger), { description = "Signal" })
 
 -- Clipboard
