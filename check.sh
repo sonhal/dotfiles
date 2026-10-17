@@ -54,23 +54,30 @@ kitty|kitty|terminal
 waybar|waybar|bar
 swaync|swaync|notifications
 hypridle|hypridle|idle
-hyprlock|hyprlock|lock screen
+hyprlock|hyprlock|lock screen, waybar power menu
 hyprpaper|hyprpaper|wallpaper
 /usr/lib/hyprpolkitagent/hyprpolkitagent|hyprpolkitagent|polkit
 rofi|rofi|launcher, clipboard, keybinds
 cliphist|cliphist|clipboard history
 wl-paste|wl-clipboard|clipboard history
 hyprshot|hyprshot|screenshots
-jq|jq|keybind cheatsheet
-wpctl|wireplumber|volume keys
+jq|jq|keybind cheatsheet, waybar routes
+notify-send|libnotify|waybar battery alerts
+wpctl|wireplumber|volume keys, waybar volume
 playerctl|playerctl|media keys
-pavucontrol|pavucontrol|waybar volume
+pavucontrol|pavucontrol|waybar volume click
 thunar|thunar|file manager
 xdg-user-dirs-gtk-update|xdg-user-dirs-gtk|Thunar bookmarks
 nwg-look|nwg-look|GTK theme
 kvantummanager|kvantum|Qt style
 qt5ct|qt5ct|Qt 5 config
 qt6ct|qt6ct|Qt 6 config
+'
+
+# only checked on machines with a battery
+laptop='
+powerprofilesctl|power-profiles-daemon|waybar power profile
+brightnessctl|brightnessctl|brightness keys
 '
 
 check_package() {
@@ -149,6 +156,11 @@ EOF
 check_packages shell "$shell"
 check_packages nvim "$nvim"
 check_packages desktop "$desktop"
+if ls /sys/class/power_supply/BAT* >/dev/null 2>&1; then
+  check_packages laptop "$laptop"
+else
+  echo "laptop (skipped, no battery)"
+fi
 
 if [ "$1" = --kitty ]; then
   echo kitty
