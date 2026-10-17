@@ -1,5 +1,5 @@
 #!/bin/sh
-# Checks that what the configs in this repo expect is installed.
+# Checks that the fonts and packages the configs in this repo expect are installed.
 # Usage: ./check.sh [--kitty]
 #   --kitty  also start kitty briefly and check which font it actually loads
 # Exits non-zero if anything is missing.
@@ -17,6 +17,78 @@ Noto Sans||no|noto-fonts|fallback
 JoyPixels||no|ttf-joypixels|emoji, starship
 DejaVu Sans Mono||no|ttf-dejavu|kitty fallback for starship ➜
 '
+
+# command, or absolute path for files | package hint | used by
+shell='
+zsh|zsh|shell
+/usr/share/zsh/plugins/zsh-syntax-highlighting|zsh-syntax-highlighting|.zshrc
+/usr/share/zsh/plugins/zsh-autosuggestions|zsh-autosuggestions|.zshrc
+/usr/share/zsh/plugins/zsh-history-substring-search|zsh-history-substring-search|.zshrc
+starship|starship|prompt
+fzf|fzf|.zshrc, ff
+zoxide|zoxide|.zshrc
+keychain|keychain|ssh-agent
+eza|eza|ls, lt
+bat|bat|cat, ff
+lazygit|lazygit|lg
+tmux|tmux|terminal multiplexer
+btop|btop|SUPER+T
+pandoc|pandoc-cli|md
+'
+
+nvim='
+nvim|neovim|editor
+git|git|plugin manager
+make|make|telescope-fzf-native
+unzip|unzip|Mason
+rg|ripgrep|telescope grep
+gcc|gcc|treesitter parsers
+tree-sitter|tree-sitter-cli|treesitter parsers
+'
+
+desktop='
+ly-dm|ly|login greeter
+uwsm|uwsm|starts Hyprland
+Hyprland|hyprland|window manager
+kitty|kitty|terminal
+waybar|waybar|bar
+swaync|swaync|notifications
+hypridle|hypridle|idle
+hyprlock|hyprlock|lock screen
+hyprpaper|hyprpaper|wallpaper
+/usr/lib/hyprpolkitagent/hyprpolkitagent|hyprpolkitagent|polkit
+rofi|rofi|launcher, clipboard, keybinds
+cliphist|cliphist|clipboard history
+wl-paste|wl-clipboard|clipboard history
+hyprshot|hyprshot|screenshots
+jq|jq|keybind cheatsheet
+wpctl|wireplumber|volume keys
+playerctl|playerctl|media keys
+pavucontrol|pavucontrol|waybar volume
+thunar|thunar|file manager
+xdg-user-dirs-gtk-update|xdg-user-dirs-gtk|Thunar bookmarks
+nwg-look|nwg-look|GTK theme
+kvantummanager|kvantum|Qt style
+qt5ct|qt5ct|Qt 5 config
+qt6ct|qt6ct|Qt 6 config
+'
+
+check_package() {
+  target=$1 pkg=$2 users=$3
+  case $target in
+    /*) [ -e "$target" ] ;;
+    *)  command -v "$target" >/dev/null 2>&1 ;;
+  esac && ok "${target##*/} ($users)" || fail "${target##*/} ($users) — install: $pkg"
+}
+
+check_packages() {
+  echo "$1"
+  while IFS='|' read -r target pkg users; do
+    [ -n "$target" ] && check_package "$target" "$pkg" "$users"
+  done <<EOF
+$2
+EOF
+}
 
 check_font() {
   family=$1 styles=$2 mono=$3 pkg=$4 users=$5
@@ -73,6 +145,10 @@ while IFS='|' read -r family styles mono pkg users; do
 done <<EOF
 $fonts
 EOF
+
+check_packages shell "$shell"
+check_packages nvim "$nvim"
+check_packages desktop "$desktop"
 
 if [ "$1" = --kitty ]; then
   echo kitty
