@@ -18,15 +18,15 @@ Clear history with `cliphist wipe`.
 
 ## Image editing
 
-- https://www.pinta-project.com/ (AUR)
+- https://www.pinta-project.com/
 
 ## Themes
 
 Use nwg-look to config GTK apps.
 https://github.com/nwg-piotr/nwg-look
 
-Theme package
-- https://aur.archlinux.org/packages/arc-solid-gtk-theme
+Theme package: `adw-gtk-theme` (https://github.com/lassekongo83/adw-gtk3), set to `adw-gtk3-dark` in
+`hypr/envs.lua` and with nwg-look.
 
 ### Qt apps
 
@@ -50,6 +50,7 @@ Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` 
 ## Waybar
 
 - Icons need `otf-font-awesome`
+- Text uses `ttf-jetbrains-mono-nerd`
 
 
 ## Key packages
@@ -59,6 +60,8 @@ Started by keybinds etc...
 - https://github.com/jesseduffield/lazydocker
 - https://github.com/junegunn/fzf (Required for shell)
 - https://eza.rocks/ (Required for shell aliases)
+- https://github.com/sharkdp/bat (Required for the `ff` alias)
+- https://starship.rs/ (Shell prompt, config in `.config/starship.toml`)
 
 
 ## Zsh
@@ -66,6 +69,5 @@ Started by keybinds etc...
 ### Plugins
 
 - zsh-syntax-highlighting
-- https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git
 - https://github.com/zsh-users/zsh-autosuggestions
-- https://github.com/marlonrichert/zsh-autocomplete
+- https://github.com/zsh-users/zsh-history-substring-search (Up/Down search history for what's typed)
