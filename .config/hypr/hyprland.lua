@@ -26,7 +26,7 @@ pcall(require, "monitors")
 ---------------------
 
 local terminal    = "kitty"
-local fileManager = "dolphin"
+local fileManager = "thunar"
 local menu        = "rofi -show drun -show-icons"
 local browser     = "firefox"
 local messenger   = "signal-desktop"

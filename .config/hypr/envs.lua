@@ -22,6 +22,9 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_STYLE_OVERRIDE", "kvantum")
 hl.env("GTK_USE_PORTAL", "1")
 
+-- 24-hour time (en_US uses AM/PM); needs en_GB.UTF-8 in /etc/locale.gen
+hl.env("LC_TIME", "en_GB.UTF-8")
+
 -- Use XCompose file
 hl.env("XCOMPOSEFILE", os.getenv("HOME") .. "/.XCompose")
 
