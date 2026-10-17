@@ -9,29 +9,41 @@
     "modules-left": [
         // ext-workspace-v1 protocol. hyprland/workspaces click-to-switch is broken:
         // it sends legacy "dispatch workspace N" IPC, which Hyprland's Lua config rejects.
-        "ext/workspaces"
+        "ext/workspaces",
+        "hyprland/submap"
     ],
     "modules-center": [
         "hyprland/window"
     ],
     "modules-right": [
-        "mpd",
+        "systemd-failed-units",
+        "privacy",
+        "mpris",
         "idle_inhibitor",
-        "pulseaudio",
+        "wireplumber",
         "network",
+        "custom/routes",
         "power-profiles-daemon",
         "cpu",
         "memory",
         "temperature",
         "backlight",
-        "keyboard-state",
+        "custom/numlock",
+        "custom/capslock",
         "hyprland/language",
         "battery",
-        "battery#bat2",
         "clock",
         "tray",
         "custom/power"
     ],
+    // Shows the active submap (e.g. "resize"), hidden otherwise. Click to leave it.
+    "hyprland/submap": {
+        "tooltip": false,
+        "on-click": "hyprctl dispatch 'hl.dsp.submap(\"reset\")'"
+    },
+    "hyprland/window": {
+        "separate-outputs": true // Each bar shows the focused window on its own monitor
+    },
     "ext/workspaces": {
         "on-click": "activate",
         "sort-by-id": true,
@@ -42,50 +54,37 @@
             "default": ""
         }
     },
-    "keyboard-state": {
-        "numlock": true,
-        "capslock": true,
-        "format": "{name} {icon}",
-        "format-icons": {
-            "locked": "",
-            "unlocked": ""
+    // Lock indicators that only show while on. Polls the keyboard LEDs instead of using
+    // keyboard-state, which reads them once on key release and can get stuck on a stale
+    // state when Hyprland hasn't updated the LED yet. Custom modules hide on empty output.
+    "custom/numlock": {
+        "exec": "grep -qx 1 /sys/class/leds/*::numlock/brightness 2>/dev/null && echo Num",
+        "interval": 1,
+        "format": "{} ",
+        "tooltip": false
+    },
+    "custom/capslock": {
+        "exec": "grep -qx 1 /sys/class/leds/*::capslock/brightness 2>/dev/null && echo Caps",
+        "interval": 1,
+        "format": "{} ",
+        "tooltip": false
+    },
+    // Count of failed system + user units, hidden when none. Click to list them.
+    "systemd-failed-units": {
+        "format": "{nr_failed} failed ",
+        "on-click": "kitty --hold sh -c 'systemctl --failed; systemctl --user --failed'"
+    },
+    // Shows only while the screen is shared or a mic is recording (PipeWire streams)
+    "privacy": {
+        "icon-size": 16
+    },
+    "mpris": {
+        "format": "{status_icon} {dynamic}",
+        "dynamic-len": 40,
+        "status-icons": {
+            "playing": "",
+            "paused": ""
         }
-    },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
-    "sway/scratchpad": {
-        "format": "{icon} {count}",
-        "show-empty": false,
-        "format-icons": ["", ""],
-        "tooltip": true,
-        "tooltip-format": "{app}: {title}"
-    },
-    "mpd": {
-        "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
-        "format-disconnected": "Disconnected ",
-        "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
-        "unknown-tag": "N/A",
-        "interval": 5,
-        "consume-icons": {
-            "on": " "
-        },
-        "random-icons": {
-            "off": "<span color=\"#f53c3c\"></span> ",
-            "on": " "
-        },
-        "repeat-icons": {
-            "on": " "
-        },
-        "single-icons": {
-            "on": "1 "
-        },
-        "state-icons": {
-            "paused": "",
-            "playing": ""
-        },
-        "tooltip-format": "MPD (connected)",
-        "tooltip-format-disconnected": "MPD (disconnected)"
     },
     "idle_inhibitor": {
         "format": "{icon}",
@@ -103,8 +102,15 @@
         // }
     },
     "clock": {
-        "timezone": "Europe/Oslo",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "iso8601": true, // Monday first, ISO week numbers
+            "weeks-pos": "left",
+            "format": {
+                "today": "<span color='#88c0d0'><b><u>{}</u></b></span>", // Nord frost
+                "weeks": "<span color='#616e88'>{}</span>" // dim week numbers
+            }
+        },
         "format-alt": "{:%Y-%m-%d}"
     },
     "cpu": {
@@ -115,8 +121,13 @@
         "format": "{}% "
     },
     "temperature": {
-        // "thermal-zone": 2,
-        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        // First existing CPU sensor: AMD k10temp (Tctl), then Intel coretemp (package).
+        // Without this it reads thermal_zone0, which can be the wifi card.
+        "hwmon-path-abs": [
+            "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+            "/sys/devices/platform/coretemp.0/hwmon"
+        ],
+        "input-filename": "temp1_input",
         "critical-threshold": 80,
         // "format-critical": "{temperatureC}°C {icon}",
         "format": "{temperatureC}°C {icon}",
@@ -138,12 +149,13 @@
         "format-charging": "{capacity}% ",
         "format-plugged": "{capacity}% ",
         "format-alt": "{time} {icon}",
+        "events": {
+            "on-discharging-warning": "notify-send 'Battery low' 'Below 30%'",
+            "on-discharging-critical": "notify-send -u critical 'Battery critical' 'Below 15%, plug in now'"
+        },
         // "format-good": "", // An empty format will hide the module
         // "format-full": "",
         "format-icons": ["", "", "", "", ""]
-    },
-    "battery#bat2": {
-        "bat": "BAT2"
     },
     "power-profiles-daemon": {
       "format": "{icon}",
@@ -156,6 +168,13 @@
         "power-saver": ""
       }
     },
+    // Hover to list every interface with IPv4 routes (all routing tables), skipping
+    // container/VM bridges. Default routes show their gateway and metric.
+    "custom/routes": {
+        "exec": "ip -j -4 route show table all | jq -c '[.[] | select(.table != \"local\" and (.type // \"unicast\") == \"unicast\" and (.flags | index(\"linkdown\") | not) and (.dev | test(\"^(lo|docker|br-|veth|virbr|vmnet)\") | not))] | group_by(.dev) | map(.[0].dev + \": \" + ([.[] | .dst + (if .gateway then \" via \" + .gateway else \"\" end) + (if .metric then \" (metric \\(.metric))\" else \"\" end)] | join(\", \"))) | {text: \"\uf0e8\", tooltip: join(\"\\n\")}'",
+        "return-type": "json",
+        "interval": 10
+    },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
         "format-wifi": "{essid} ({signalStrength}%) ",
@@ -165,36 +184,15 @@
         "format-disconnected": "Disconnected ⚠",
         "format-alt": "{ifname}: {ipaddr}/{cidr}"
     },
-    "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
+    "wireplumber": {
         "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
         "format-muted": " {format_source}",
         "format-source": "{volume}% ",
         "format-source-muted": "",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
-        },
-        "on-click": "pavucontrol"
-    },
-    "custom/media": {
-        "format": "{icon} {text}",
-        "return-type": "json",
-        "max-length": 40,
-        "format-icons": {
-            "spotify": "",
-            "default": "🎜"
-        },
-        "escape": true,
-        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
-        // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+        "format-icons": ["", "", ""],
+        "tooltip-format": "{node_name}\nMic: {source_desc}",
+        "on-click": "pavucontrol",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
     },
     "custom/power": {
         "format" : "⏻ ",
@@ -202,8 +200,9 @@
 		"menu": "on-click",
 		"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
 		"menu-actions": {
-			"shutdown": "shutdown",
-			"reboot": "reboot",
+			"lock": "hyprlock",
+			"shutdown": "systemctl poweroff", // plain `shutdown` waits a minute
+			"reboot": "systemctl reboot",
 			"suspend": "systemctl suspend",
 			"hibernate": "systemctl hibernate"
 		}

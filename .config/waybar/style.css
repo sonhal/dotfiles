@@ -1,6 +1,7 @@
 @define-color foreground #d8dee9;
 @define-color background #242933; /* darker "Nordic Darker" base, matching kitty */
 @define-color urgent #bf616a;
+@define-color warning #ebcb8b;
 
 /* Background lives on the window only. Painting it on every widget via `*`
  * makes child labels opaque, which covers the button's own decoration. */
@@ -50,18 +51,23 @@ window#waybar {
 }
 
 #tray,
+#systemd-failed-units,
+#privacy,
+#mpris,
 #cpu,
 #battery,
 #network,
-#pulseaudio,
+#custom-routes,
+#wireplumber,
 #clock,
 #memory,
-#keyboard-state,
-#hyprland-language,
+#language,
 #temperature,
 #backlight,
 #idle_inhibitor,
 #power-profiles-daemon,
+#custom-numlock,
+#custom-capslock,
 #custom-power {
   padding: 0 8px;
   margin: 0 2px;
@@ -69,18 +75,23 @@ window#waybar {
 }
 
 #tray:hover,
+#systemd-failed-units:hover,
+#privacy:hover,
+#mpris:hover,
 #cpu:hover,
 #battery:hover,
 #network:hover,
-#pulseaudio:hover,
+#custom-routes:hover,
+#wireplumber:hover,
 #clock:hover,
 #memory:hover,
-#keyboard-state:hover,
-#hyprland-language:hover,
+#language:hover,
 #temperature:hover,
 #backlight:hover,
 #idle_inhibitor:hover,
 #power-profiles-daemon:hover,
+#custom-numlock:hover,
+#custom-capslock:hover,
 #custom-power:hover {
   border-bottom-color: @foreground;
 }
@@ -90,14 +101,28 @@ tooltip {
   border: 1px solid alpha(@foreground, 0.3);
 }
 
-#tooltip {
+tooltip label {
   padding: 2px;
+}
+
+#battery.warning:not(.charging) {
+  color: @warning;
+}
+
+#battery.critical:not(.charging),
+#temperature.critical,
+#systemd-failed-units {
+  color: @urgent;
+}
+
+/* Stands out so a forgotten resize mode is obvious */
+#submap {
+  padding: 0 8px;
+  margin: 0 2px;
+  color: @background;
+  background-color: @warning;
 }
 
 #custom-power {
   font-size: 16px;
-}
-
-#keyboard-state >*:not(:last-child) {
-  margin-right: 4px;
 }

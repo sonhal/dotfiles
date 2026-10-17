@@ -19,6 +19,28 @@ sudo systemctl enable ly@tty2.service
 Pick the `Hyprland (uwsm-managed)` session; ly remembers it. `.zprofile` only autostarts Hyprland
 on a plain tty login, so the other ttys still work as a fallback.
 
+## Notifications
+
+Package: `swaync`. It runs from its systemd user unit, which uwsm starts with the graphical
+session. Enable it once per machine (not stored in the dotfiles):
+
+```sh
+systemctl --user enable swaync
+```
+
+Don't also start it from Hyprland's autostart: the unit then finds an instance already running,
+fails, and shows up as a failed unit in the bar.
+
+Check it's running correctly:
+
+```sh
+systemctl --user status swaync    # active (running), started by systemd
+systemctl --user --failed         # should not list swaync
+notify-send test                  # a popup should appear
+```
+
+If the unit failed earlier, clear it with `systemctl --user reset-failed swaync` and restart it.
+
 ## Clipboard manager
 
 - https://github.com/sentriz/cliphist 
