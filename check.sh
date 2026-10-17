@@ -10,8 +10,8 @@ fail() { printf '  \033[31m✘\033[0m %s\n' "$1"; failed=1; }
 
 # family | styles (comma separated, empty = any) | monospace (yes/no) | package hint | used by
 fonts='
-Lilex|Regular,Bold,Italic,Bold Italic|yes|ttf-lilex (AUR)|kitty, md
-Inter|Regular,Light|no|inter-font|gtk, hyprlock, waybar, sans-serif
+Lilex|Regular,Bold,Italic,Bold Italic|yes|ttf-lilex (AUR)|kitty, md, monospace
+Inter|Regular,Light|no|inter-font|gtk, hyprlock, waybar, rofi, sans-serif
 Symbols Nerd Font||no|ttf-nerd-fonts-symbols|waybar icons
 Noto Sans||no|noto-fonts|fallback
 JoyPixels||no|ttf-joypixels|emoji, starship

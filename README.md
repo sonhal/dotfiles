@@ -74,9 +74,12 @@ Packages: `ttf-lilex` (AUR), `inter-font`, `ttf-nerd-fonts-symbols`, `noto-fonts
 - Waybar text uses Inter with fixed-width digits (`tnum`); icons come from Symbols Nerd Font, so
   they must use Nerd Font code points (Nerd Fonts v3 has the newer Font Awesome icons under
   `nf-fa-*`, not at Font Awesome's own code points).
-- UI text uses Inter: GTK (set in nwg-look), hyprlock, and `fontconfig/fonts.conf` makes it the
-  default `sans-serif` for everything else (Qt, browsers). Symlink `fontconfig/` into
-  `~/.config`. Noto Sans stays installed as the fallback for characters Inter lacks.
+- UI text uses Inter: GTK (set in nwg-look), hyprlock, rofi, and `fontconfig/fonts.conf` makes it
+  the default `sans-serif` for everything else (Qt, browsers). The same file makes Lilex the default
+  `monospace`. Symlink `fontconfig/` into `~/.config`. Noto Sans stays installed as the fallback for
+  characters Inter lacks.
+- `hypr/envs.lua` sets the GNOME document font (Inter) and monospace font (Lilex) with gsettings at
+  Hyprland start; nwg-look only sets the main UI font.
 - JoyPixels is the colour emoji font, e.g. for starship's default module symbols.
 - Lilex lacks the starship prompt symbol `➜`; kitty draws it from DejaVu Sans Mono.
 

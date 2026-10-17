@@ -27,7 +27,9 @@ hl.env("LC_TIME", "en_GB.UTF-8")
 -- Use XCompose file
 hl.env("XCOMPOSEFILE", os.getenv("HOME") .. "/.XCompose")
 
--- Dark mode for libadwaita/portal apps
+-- Dark mode and fonts for libadwaita/portal apps. nwg-look only sets the UI font (font-name).
 hl.on("hyprland.start", function()
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface document-font-name 'Inter 11'")
+    hl.exec_cmd("gsettings set org.gnome.desktop.interface monospace-font-name 'Lilex 11'")
 end)
