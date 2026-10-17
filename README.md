@@ -63,7 +63,8 @@ Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` 
 
 ## Fonts
 
-Packages: `ttf-lilex` (AUR), `inter-font`, `ttf-nerd-fonts-symbols`, `noto-fonts`.
+Packages: `ttf-lilex` (AUR), `inter-font`, `ttf-nerd-fonts-symbols`, `noto-fonts`,
+`ttf-joypixels`, `ttf-dejavu`.
 
 - kitty uses plain Lilex, not a Nerd Font: kitty's FAQ advises against patched fonts, and kitty
   ships its own Nerd Font symbols, which `kitty.conf` pins the icon code points to (Nerd Fonts
@@ -76,6 +77,8 @@ Packages: `ttf-lilex` (AUR), `inter-font`, `ttf-nerd-fonts-symbols`, `noto-fonts
 - UI text uses Inter: GTK (set in nwg-look), hyprlock, and `fontconfig/fonts.conf` makes it the
   default `sans-serif` for everything else (Qt, browsers). Symlink `fontconfig/` into
   `~/.config`. Noto Sans stays installed as the fallback for characters Inter lacks.
+- JoyPixels is the colour emoji font, e.g. for starship's default module symbols.
+- Lilex lacks the starship prompt symbol `➜`; kitty draws it from DejaVu Sans Mono.
 
 
 ## Key packages
