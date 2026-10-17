@@ -1,0 +1,27 @@
+/* Nord colors on top of the Arc-Dark layout. https://www.nordtheme.com/docs/colors-and-palettes */
+
+@import "Arc-Dark"
+
+* {
+    background:                  #242933f2; /* darker "Nordic Darker" base, matching kitty */
+    foreground:                  #d8dee9;
+    border-color:                #4c566a;
+    separatorcolor:              #3b4252;
+
+    normal-background:           @background;
+    alternate-normal-background: #3b4252;
+    selected-normal-background:  #88c0d0;
+    selected-normal-foreground:  #2e3440;
+
+    active-foreground:           #88c0d0;
+    active-background:           transparent;
+    alternate-active-background: #3b4252;
+    selected-active-background:  #81a1c1;
+    selected-active-foreground:  #2e3440;
+
+    urgent-foreground:           #bf616a;
+    urgent-background:           transparent;
+    alternate-urgent-background: #3b4252;
+    selected-urgent-background:  #bf616a;
+    selected-urgent-foreground:  #eceff4;
+}

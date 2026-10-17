@@ -16,8 +16,7 @@ hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
--- Dark mode
-hl.env("GTK_THEME", "adw-gtk3-dark")
+-- Dark mode (GTK theme and icons are picked in nwg-look)
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_STYLE_OVERRIDE", "kvantum")
 hl.env("GTK_USE_PORTAL", "1")
@@ -28,9 +27,7 @@ hl.env("LC_TIME", "en_GB.UTF-8")
 -- Use XCompose file
 hl.env("XCOMPOSEFILE", os.getenv("HOME") .. "/.XCompose")
 
--- Dark mode gsettings
+-- Dark mode for libadwaita/portal apps
 hl.on("hyprland.start", function()
-    hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'")
-    hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'")
 end)

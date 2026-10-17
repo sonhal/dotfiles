@@ -1,0 +1,10 @@
+/* Tweaks applied on top of the theme picked in nwg-look */
+
+/* Nordic styles selected sidebar text dark but gives Thunar's sidebar (a tree view, not a
+ * list) no light background behind it, so the current folder is unreadable. Use Nordic's
+ * own frost selection colors. */
+.thunar .sidebar .view:selected,
+.thunar .sidebar.view:selected {
+  background-color: #8fbcbb;
+  color: #2e3440;
+}

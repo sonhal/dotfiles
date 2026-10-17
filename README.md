@@ -25,21 +25,28 @@ Clear history with `cliphist wipe`.
 Use nwg-look to config GTK apps.
 https://github.com/nwg-piotr/nwg-look
 
-Theme package: `adw-gtk-theme` (https://github.com/lassekongo83/adw-gtk3), set to `adw-gtk3-dark` in
-`hypr/envs.lua` and with nwg-look.
+Packages (AUR): `nordic-theme` (GTK theme `Nordic`), `nordzy-icon-theme` (icons `Nordzy-dark`).
 
-- nwg-look writes `gtk-3.0/settings.ini` and `gtk-4.0/` (its CSS files link into the adw-gtk3-dark theme,
+- The GTK theme and icons are picked in nwg-look only; `hypr/envs.lua` just sets the dark
+  `color-scheme`.
+- nwg-look writes `gtk-3.0/settings.ini` and `gtk-4.0/` (its CSS files link into the selected theme,
   so GTK 4 apps follow it too); symlink both folders into `~/.config`.
+- Terminal, Rofi, Hyprland, hyprlock and Neovim use the Nord palette with the darker `#242933`
+  background.
+- `swaync/style.css` imports swaync's default style and only changes its colors; symlink `swaync/`
+  into `~/.config`. `btop/btop.conf` is linked as a file into `~/.config/btop/`.
 
 ### Qt apps
 
 Packages: `kvantum`, `kvantum-qt5`, `qt5ct`, `qt6ct`, `breeze-icons`.
 
 - Qt apps use the Kvantum style via qt6ct (env set in `hypr/envs.lua`). `Kvantum/`, `qt5ct/` and
-  `qt6ct/` set them to KvGnomeDark with breeze-dark icons; symlink them into `~/.config`.
+  `qt6ct/` set them to the Nordic-Solid Kvantum theme with Nordzy-dark icons; symlink them into
+  `~/.config`. Both take their palette from the Kvantum theme.
+- `Kvantum/Nordic-Solid/` is copied from https://github.com/EliverLara/Nordic (`kde/kvantum/`); the
+  Solid variant skips the translucency and blur that only work under KWin.
 - Qt 5 apps load qt5ct, which also answers to `QT_QPA_PLATFORMTHEME=qt6ct`, and need
-  `kvantum-qt5` for the style. qt5ct can't read KDE `.colors` files, so `qt5ct.conf` takes the
-  palette from the Kvantum theme instead.
+  `kvantum-qt5` for the style.
 
 ### Thunar
 

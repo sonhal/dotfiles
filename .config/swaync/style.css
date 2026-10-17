@@ -1,0 +1,33 @@
+/* swaync's default style with Nord colors (darker #242933 base) and square corners */
+
+@import url("file:///etc/xdg/swaync/style.css");
+
+:root {
+  --cc-bg: rgba(36, 41, 51, 0.95);
+  --noti-border-color: #4c566a;
+  --noti-bg: 46, 52, 64;
+  --noti-bg-alpha: 0.95;
+  --noti-bg-darker: #242933;
+  --noti-bg-hover: #3b4252;
+  --noti-bg-focus: rgba(67, 76, 94, 0.6);
+  --noti-close-bg: #434c5e;
+  --noti-close-bg-hover: #4c566a;
+  --text-color: #d8dee9;
+  --text-color-disabled: #616e88;
+  --bg-selected: #5e81ac;
+  --border-radius: 0;
+}
+
+@define-color cc-bg rgba(36, 41, 51, 0.95);
+@define-color noti-border-color #4c566a;
+@define-color noti-bg rgba(46, 52, 64, 0.95);
+@define-color noti-bg-opaque #2e3440;
+@define-color noti-bg-darker #242933;
+@define-color noti-bg-hover #3b4252;
+@define-color noti-bg-hover-opaque #3b4252;
+@define-color noti-bg-focus rgba(67, 76, 94, 0.6);
+@define-color noti-close-bg #434c5e;
+@define-color noti-close-bg-hover #4c566a;
+@define-color text-color #d8dee9;
+@define-color text-color-disabled #616e88;
+@define-color bg-selected #5e81ac;

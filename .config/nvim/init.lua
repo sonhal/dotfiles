@@ -400,7 +400,16 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      -- mini.icons colors follow the colorscheme; it stands in for nvim-web-devicons so
+      -- plugins that expect devicons (Telescope, neo-tree) use it too.
+      {
+        'echasnovski/mini.icons',
+        enabled = vim.g.have_nerd_font,
+        config = function(_, opts)
+          require('mini.icons').setup(opts)
+          MiniIcons.mock_nvim_web_devicons()
+        end,
+      },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -1054,20 +1063,20 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'gbprod/nord.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
+      require('nord').setup {
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        -- Darker "Nordic Darker" background, matching kitty
+        on_colors = function(colors) colors.polar_night.origin = '#242933' end,
       }
 
       -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'nord'
     end,
   },
 
