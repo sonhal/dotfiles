@@ -25,7 +25,7 @@ the system package manager.
 
 ```sh
 sudo pacman -S --needed neovim git curl tar unzip base-devel tree-sitter-cli ripgrep fd \
-  tmux wl-clipboard ttf-jetbrains-mono-nerd nodejs npm python go jdk-openjdk rustup lldb
+  tmux wl-clipboard nodejs npm python go jdk-openjdk rustup lldb
 ```
 
 Drop the last five language packages you do not need on that machine. Mason will
@@ -42,7 +42,7 @@ Core, needed for the config to build at all:
 | `base-devel` | `gcc` and `make`. Compiles treesitter parsers, telescope-fzf-native and LuaSnip's regex helper. |
 | `tree-sitter-cli` | nvim-treesitter main branch generates parsers with it. Must be the distro package, not the npm one. |
 | `ripgrep` | Telescope live grep and grep-under-cursor. |
-| `ttf-jetbrains-mono-nerd` | Icons in the statusline, file trees, diagnostics and which-key (`vim.g.have_nerd_font = true`). |
+| Nerd Font symbols | Icons in the statusline, file trees, diagnostics and which-key (`vim.g.have_nerd_font = true`). They come from the terminal: kitty ships them built in; other terminals need `ttf-nerd-fonts-symbols-mono`. |
 
 Workflow:
 
