@@ -8,6 +8,13 @@ Intended for an Arch linux install with hyprland.
 ## Clipboard manager
 
 - https://github.com/sentriz/cliphist 
+- `wl-clipboard`
+
+`SUPER + Z` opens the history in rofi, with image previews from `.config/rofi/cliphist-rofi-img`
+(the v0.7.0 contrib script, with thumbnails moved from /tmp to $XDG_RUNTIME_DIR;
+the version on master needs a newer cliphist).
+
+Clear history with `cliphist wipe`.
 
 ## Image editing
 

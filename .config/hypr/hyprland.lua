@@ -206,7 +206,7 @@ hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.exec_cmd(terminal .. " -e k9s"), { des
 hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger), { description = "Signal" })
 
 -- Clipboard
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"), { description = "Clipboard history" })
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("rofi -modi clipboard:~/.config/rofi/cliphist-rofi-img -show clipboard -show-icons"), { description = "Clipboard history" })
 
 -- See https://wiki.hypr.land/configuring/core/binds/ for more
 hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal), { description = "Terminal" })
