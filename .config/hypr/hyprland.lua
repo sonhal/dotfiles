@@ -46,6 +46,8 @@ hl.on("hyprland.start", function()
 
     hl.exec_cmd("wl-paste --type text --watch cliphist store")  -- Stores only text data
     hl.exec_cmd("wl-paste --type image --watch cliphist store") -- Stores only image data
+
+    hl.exec_cmd("xdg-user-dirs-gtk-update") -- GTK/Thunar bookmarks for the XDG user dirs
 end)
 
 ---------------------

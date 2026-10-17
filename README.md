@@ -28,6 +28,9 @@ https://github.com/nwg-piotr/nwg-look
 Theme package: `adw-gtk-theme` (https://github.com/lassekongo83/adw-gtk3), set to `adw-gtk3-dark` in
 `hypr/envs.lua` and with nwg-look.
 
+- nwg-look writes `gtk-3.0/settings.ini` and `gtk-4.0/` (its CSS files link into the adw-gtk3-dark theme,
+  so GTK 4 apps follow it too); symlink both folders into `~/.config`.
+
 ### Qt apps
 
 Packages: `kvantum`, `kvantum-qt5`, `qt5ct`, `qt6ct`, `breeze-icons`.
@@ -43,7 +46,9 @@ Packages: `kvantum`, `kvantum-qt5`, `qt5ct`, `qt6ct`, `breeze-icons`.
 Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` (Android),
 `xdg-user-dirs`.
 
-- Side pane bookmarks live in `~/.config/gtk-3.0/bookmarks`.
+- Side pane bookmarks live in `~/.config/gtk-3.0/bookmarks`. It holds absolute paths, so it isn't
+  tracked; if it's missing, `xdg-user-dirs-gtk-update` (package `xdg-user-dirs-gtk`) creates it with
+  the standard XDG user dirs at Hyprland start.
 - Dates use the locale's time format; `LC_TIME=en_GB.UTF-8` (set in `hypr/envs.lua`) gives 24-hour
   time and needs `en_GB.UTF-8` uncommented in `/etc/locale.gen` before running `locale-gen`.
 
