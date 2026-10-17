@@ -3,6 +3,8 @@
 ## Note
 Intended for an Arch linux install with hyprland.
 
+Run `./check.sh` to see if the fonts the configs expect are installed; `./check.sh --kitty` also
+starts kitty briefly to check which font it actually loads.
 
 
 ## Clipboard manager
@@ -59,10 +61,17 @@ Packages: `thunar`, `tumbler` (thumbnails), `gvfs` (devices, trash), `gvfs-mtp` 
 - Dates use the locale's time format; `LC_TIME=en_GB.UTF-8` (set in `hypr/envs.lua`) gives 24-hour
   time and needs `en_GB.UTF-8` uncommented in `/etc/locale.gen` before running `locale-gen`.
 
-## Waybar
+## Fonts
 
-- Icons need `otf-font-awesome`
-- Text uses `ttf-jetbrains-mono-nerd`
+Packages: `ttf-lilex` (AUR), `ttf-jetbrains-mono-nerd`, `otf-font-awesome`, `noto-fonts`.
+
+- kitty uses plain Lilex, not a Nerd Font: kitty's FAQ advises against patched fonts, and kitty
+  ships its own Nerd Font symbols, which `kitty.conf` pins the icon code points to (Nerd Fonts
+  v3.5 ranges).
+- kitty only accepts fonts fontconfig marks as monospace. Lilex Medium and SemiBold are not (a few
+  glyphs have stray widths), so stick to Regular/Bold.
+- Waybar text uses JetBrainsMono Nerd Font, with Font Awesome as icon fallback.
+- UI text (GTK, hyprlock) uses Noto Sans.
 
 
 ## Key packages
