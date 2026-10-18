@@ -81,6 +81,7 @@ alias lg="lazygit"
 alias tmuxk='tmux kill-session -t'
 alias tmuxa='tmux attach -t'
 alias tmuxl='tmux list-sessions'
+alias t='~/.config/tmux/sessionizer.sh'                                         # pick a project, open/switch to its session
 
 # +--------+
 # | docker |

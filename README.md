@@ -134,3 +134,21 @@ Started by keybinds etc...
 - zsh-syntax-highlighting
 - https://github.com/zsh-users/zsh-autosuggestions
 - https://github.com/zsh-users/zsh-history-substring-search (Up/Down search history for what's typed)
+
+## Tmux
+
+Config in `.config/tmux/`; symlink the folder into `~/.config`. Prefix is `C-s`.
+
+### Sessionizer
+
+`prefix f` (or `t` in the shell) picks a project with fzf and switches to its session, creating
+it if needed. It lists the dotfiles repo and the folders in the XDG projects dir; a folder there
+without `.git` or a build file is treated as a group and its subfolders are listed too.
+
+The projects dir is per machine (`~/.config/user-dirs.dirs`, not tracked). Point it at wherever
+projects live on this machine:
+
+```sh
+xdg-user-dirs-update --set PROJECTS ~/Development
+xdg-user-dir PROJECTS    # check
+```

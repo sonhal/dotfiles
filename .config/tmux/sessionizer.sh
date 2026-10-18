@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Pick a project with fzf and switch to its tmux session, creating the
+# session (started in the project folder) if it doesn't exist yet.
+#
+#   sessionizer.sh        pick from the list
+#   sessionizer.sh DIR    skip the picker and use DIR
+#
+# Projects: the dotfiles repo and every folder directly in the XDG
+# projects dir (XDG_PROJECTS_DIR in ~/.config/user-dirs.dirs, set per
+# machine). A folder there that isn't a project itself 
+set -euo pipefail
+
+# xdg-user-dir prints $HOME when the entry is missing.
+root=$(xdg-user-dir PROJECTS 2>/dev/null || true)
+if [[ -z $root || $root == "$HOME" || ! -d $root ]]; then
+  echo "No projects folder: set XDG_PROJECTS_DIR in ~/.config/user-dirs.dirs" >&2
+  read -rsn1 -p 'Press a key to close' # keep the message visible in the popup
+  exit 1
+fi
+
+# The repo this script lives in (~/.config/tmux links into it).
+dotfiles=$(git -C "$(dirname "$(realpath "$0")")" rev-parse --show-toplevel 2>/dev/null || true)
+
+markers=(.git package.json go.mod build.gradle build.gradle.kts settings.gradle.kts pyproject.toml Cargo.toml)
+
+is_project() {
+  local m
+  for m in "${markers[@]}"; do
+    [[ -e $1/$m ]] && return 0
+  done
+  return 1
+}
+
+list_projects() {
+  [[ -n $dotfiles ]] && echo "$dotfiles"
+  local d
+  for d in "$root"/*/; do
+    d=${d%/}
+    echo "$d"
+    is_project "$d" && continue
+    find "$d" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -not -name node_modules
+  done
+}
+
+if [[ $# -ge 1 ]]; then
+  dir=$(realpath "$1")
+else
+  dir=$(
+    list_projects | sort -u | sed "s|^$HOME/|~/|" |
+      fzf --prompt='project> ' --reverse --height=100% || true
+  )
+  [[ -z $dir ]] && exit 0
+  dir="$HOME/${dir#\~/}"
+fi
+
+# Name the session after the path so same-named folders don't collide. tmux
+# doesn't allow . or : in session names.
+name=${dir#"$root"/}
+name=${name#"$HOME"/}
+name=${name//[.:]/_}
+
+if ! tmux has-session -t "=$name" 2>/dev/null; then
+  tmux new-session -d -s "$name" -c "$dir"
+fi
+
+if [[ -n ${TMUX:-} ]]; then
+  tmux switch-client -t "=$name"
+else
+  tmux attach-session -t "=$name"
+fi
