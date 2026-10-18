@@ -889,6 +889,7 @@ require('lazy').setup({
         'java-debug-adapter', -- Java DAP bundle (nvim-jdtls)
         'java-test', -- JUnit/TestNG runner bundle (nvim-jdtls)
         'rust-analyzer', -- Rust LSP, launched by rustaceanvim
+        'codelldb', -- Rust debug adapter, detected by rustaceanvim
         'markdownlint-cli2', -- Markdown linter (nvim-lint)
         'goimports', -- Go formatter that manages imports
         'gofumpt', -- Stricter gofmt

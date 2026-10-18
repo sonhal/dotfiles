@@ -61,9 +61,27 @@ Language runtimes. Mason needs these to install and run the servers for each lan
 | `go` | gopls, delve, goimports, gofumpt, gotestsum, golangci-lint and the gopher.nvim helpers. |
 | `jdk-openjdk` | jdtls, the Java debug adapter and test runner are all JVM programs. |
 | `rustup` | rust-analyzer comes from Mason but is useless without a toolchain. Run `rustup default stable` after install. |
-| `lldb` | Debugger backend for Rust through rustaceanvim. |
+| CodeLLDB (Mason) | Rust debug adapter, installed by mason-tool-installer and detected by rustaceanvim. |
 
 Not needed: `luarocks`. lazy.nvim mentions it in `:checkhealth` but no plugin here uses it.
+
+## Attach to Delve
+
+For interactive Go programs, start Delve in a dedicated terminal or tmux pane
+from the project's root. Replace `./cmd/myapp` with the package containing your
+program's `main` function (use `.` if it is at the root). Append program arguments
+after `--` when needed:
+
+```sh
+~/.local/share/nvim/mason/bin/dlv debug ./cmd/myapp \
+  --headless --listen=127.0.0.1:38697
+```
+
+In Neovim, set a breakpoint with `<Space>b`, then press F5 and select
+**Attach to Delve**. Press F5 to continue if the process is initially paused.
+The profile connects to an existing server on `127.0.0.1:38697`.
+To restart, close the Neovim connection with `:lua require('dap').close()`,
+stop/restart Delve in its terminal, and attach again.
 
 ## Layout
 

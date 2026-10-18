@@ -103,6 +103,16 @@ return {
     })
 
     require('dap-go').setup {
+      dap_configurations = {
+        {
+          type = 'go',
+          name = 'Attach to Delve',
+          request = 'attach',
+          mode = 'remote',
+          host = '127.0.0.1',
+          port = 38697,
+        },
+      },
       delve = {
         detached = vim.fn.has 'win32' == 0,
         output_mode = 'remote',
