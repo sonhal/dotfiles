@@ -71,8 +71,10 @@ local config = {
     map('<leader>jc', jdtls.extract_constant, 'Extract [C]onstant')
     map('<leader>jc', function() jdtls.extract_constant(true) end, 'Extract [C]onstant', 'v')
     map('<leader>jm', function() jdtls.extract_method(true) end, 'Extract [M]ethod', 'v')
-    map('<leader>jt', jdtls.test_nearest_method, '[T]est nearest method')
-    map('<leader>jT', jdtls.test_class, '[T]est class')
+    -- neotest has no Java adapter here, so the shared <leader>t test keys run
+    -- through jdtls in Java buffers (nearest = <leader>tr, file = <leader>tt).
+    map('<leader>tr', jdtls.test_nearest_method, 'Run Nearest test')
+    map('<leader>tt', jdtls.test_class, 'Run test class')
   end,
 }
 
