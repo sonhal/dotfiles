@@ -10,6 +10,44 @@ return {
     'mfussenegger/nvim-dap-python',
   },
   keys = {
+    { '<leader>dc', function() require('dap').continue() end, desc = 'Start / Continue' },
+    { '<leader>ds', '<cmd>DapViewJump scopes<cr>', desc = 'Scopes (variables)' },
+    { '<leader>dr', '<cmd>DapViewJump repl<cr>', desc = 'REPL (expressions)' },
+    { '<leader>dt', '<cmd>DapViewJump threads<cr>', desc = 'Threads / Stack frames' },
+    { '<leader>dv', '<cmd>DapViewToggle<cr>', desc = 'Toggle debug view' },
+    { '<leader>dh', function() require('dap.ui.widgets').hover() end, desc = 'Inspect value under cursor' },
+    {
+      '<leader>dw',
+      function()
+        vim.ui.input({ prompt = 'Watch expression: ', default = vim.fn.expand '<cexpr>' }, function(expression)
+          if expression and expression:match '%S' then
+            require('dap-view').add_expr(expression)
+          end
+        end)
+      end,
+      desc = 'Watch expression',
+    },
+    { '<leader>dg', function() require('dap').run_to_cursor() end, desc = 'Go to cursor (while paused)' },
+    {
+      '<leader>dl',
+      function()
+        vim.ui.input({ prompt = 'Logpoint message: ' }, function(message)
+          if message and message:match '%S' then
+            require('dap').set_breakpoint(nil, nil, message)
+          end
+        end)
+      end,
+      desc = 'Logpoint',
+    },
+    { '<leader>dx', function() require('dap').terminate() end, desc = 'Terminate program' },
+    {
+      '<leader>dd',
+      function()
+        local dap = require 'dap'
+        dap.disconnect({ terminateDebuggee = false }, function() dap.close() end)
+      end,
+      desc = 'Disconnect (request program stays running)',
+    },
     {
       '<F5>',
       function()
