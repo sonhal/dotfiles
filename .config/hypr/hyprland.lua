@@ -227,7 +227,17 @@ hl.bind(mainMod .. " + ALT + X", hl.dsp.exec_cmd("hyprshot -m window"), { descri
 
 -- Keybind cheatsheet from bind descriptions
 hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd(
-    [[hyprctl -j binds | jq -r '.[] | select(.has_description) | ({"0":"","64":"SUPER","65":"SUPER+SHIFT","72":"SUPER+ALT"}[.modmask|tostring] // (.modmask|tostring)) as $m | "\($m) + \(.key)\t\(.description)"' | column -ts $'\t' | rofi -dmenu -i -p keys]]
+    [[hyprctl -j binds | jq -r '
+        def nonempty: select(type == "string" and length > 0);
+        .[] | select(.has_description) |
+        .modmask as $mask |
+        ([{bit:64,name:"SUPER"},{bit:1,name:"SHIFT"},{bit:4,name:"CTRL"},{bit:8,name:"ALT"}]
+            | map(select(($mask / .bit | floor) % 2 == 1) | .name)) as $mods |
+        ((.display_key | nonempty) // (.key | nonempty) // ("keycode:" + (.keycode|tostring))) as $key |
+        (($mods + [$key]) | join(" + ")) as $shortcut |
+        (if (.submap // "") == "" then $shortcut else "[" + .submap + "] " + $shortcut end)
+            + "\t" + .description
+    ' | column -ts $'\t' | rofi -dmenu -i -p keys]]
 ), { description = "Show keybinds" })
 
 hl.bind(mainMod .. " + Tab", hl.dsp.focus({ last = true }), { description = "Last window" })
@@ -242,9 +252,9 @@ local directions = {
 }
 for _, d in ipairs(directions) do
     for _, key in ipairs(d.keys) do
-        hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = d.direction }))
+        hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = d.direction }), { description = "Focus " .. d.direction })
     end
-    hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }))
+    hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }), { description = "Swap window " .. d.direction })
 end
 
 -- Resize mode: mainMod + R, then hjkl / arrows, Escape or Return to leave
@@ -257,23 +267,23 @@ hl.define_submap("resize", function()
         { keys = { "down", "j" },  x = 0,   y = 20 },
     }) do
         for _, key in ipairs(d.keys) do
-            hl.bind(key, hl.dsp.window.resize({ x = d.x, y = d.y, relative = true }), { repeating = true })
+            hl.bind(key, hl.dsp.window.resize({ x = d.x, y = d.y, relative = true }), { repeating = true, description = "Resize mode: " .. (d.x ~= 0 and (d.x > 0 and "increase width" or "decrease width") or (d.y > 0 and "increase height" or "decrease height")) })
         end
     end
-    hl.bind("escape", hl.dsp.submap("reset"))
-    hl.bind("return", hl.dsp.submap("reset"))
+    hl.bind("escape", hl.dsp.submap("reset"), { description = "Resize mode: exit" })
+    hl.bind("return", hl.dsp.submap("reset"), { description = "Resize mode: exit" })
 end)
 
 -- Switch workspaces with mainMod + [0-9] / F1-F12
 -- Move active window to a workspace with mainMod + SHIFT + [0-9] / F1-F12
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,            hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key,    hl.dsp.window.move({ workspace = i }))
+    hl.bind(mainMod .. " + " .. key,            hl.dsp.focus({ workspace = i }), { description = "Switch to workspace " .. i })
+    hl.bind(mainMod .. " + SHIFT + " .. key,    hl.dsp.window.move({ workspace = i }), { description = "Move window to workspace " .. i })
 end
 for i = 1, 12 do
-    hl.bind(mainMod .. " + F" .. i,             hl.dsp.focus({ workspace = 10 + i }))
-    hl.bind(mainMod .. " + SHIFT + F" .. i,     hl.dsp.window.move({ workspace = 10 + i }))
+    hl.bind(mainMod .. " + F" .. i,             hl.dsp.focus({ workspace = 10 + i }), { description = "Switch to workspace " .. (10 + i) })
+    hl.bind(mainMod .. " + SHIFT + F" .. i,     hl.dsp.window.move({ workspace = 10 + i }), { description = "Move window to workspace " .. (10 + i) })
 end
 
 -- Special workspace (scratchpad)
@@ -283,30 +293,30 @@ hl.bind(mainMod .. " + grave",     hl.dsp.focus({ workspace = "previous" }), { d
 
 -- Cycle through existing workspaces with mainMod + scroll / bracketleft/bracketright
 -- Move active window to the next/previous existing workspace with mainMod + SHIFT + brackets
-hl.bind(mainMod .. " + mouse_down",           hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",             hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_down",           hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
+hl.bind(mainMod .. " + mouse_up",             hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace (cycle)" })
 hl.bind(mainMod .. " + bracketright",         hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
 hl.bind(mainMod .. " + bracketleft",          hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace (cycle)" })
 hl.bind(mainMod .. " + SHIFT + bracketright", hl.dsp.window.move({ workspace = "e+1" }), { description = "Move window to next workspace" })
 hl.bind(mainMod .. " + SHIFT + bracketleft",  hl.dsp.window.move({ workspace = "e-1" }), { description = "Move window to previous workspace" })
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true, description = "Drag window (left mouse button)" })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window (right mouse button)" })
 
 -- Laptop multimedia keys for volume and LCD brightness
-hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
-hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl s 10%+"),                           { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl s 10%-"),                           { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true, description = "Increase volume" })
+hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true, description = "Decrease volume" })
+hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true, description = "Toggle audio mute" })
+hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true, description = "Toggle microphone mute" })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl s 10%+"),                           { locked = true, repeating = true, description = "Increase brightness" })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl s 10%-"),                           { locked = true, repeating = true, description = "Decrease brightness" })
 
 -- Requires playerctl
-hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true, description = "Next track" })
+hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/pause media" })
+hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/pause media" })
+hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true, description = "Previous track" })
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
