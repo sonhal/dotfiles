@@ -14,6 +14,7 @@ Lilex|Regular,Bold,Italic,Bold Italic|yes|ttf-lilex (AUR)|kitty, md, monospace
 Inter|Regular,Light|no|inter-font|gtk, hyprlock, waybar, rofi, sans-serif
 Symbols Nerd Font||no|ttf-nerd-fonts-symbols|waybar icons
 Noto Sans||no|noto-fonts|fallback
+Noto Sans CJK JP||no|noto-fonts-cjk|waybar mpris, CJK fallback
 JoyPixels||no|ttf-joypixels|emoji, starship
 DejaVu Sans Mono||no|ttf-dejavu|kitty fallback for starship ➜
 '
