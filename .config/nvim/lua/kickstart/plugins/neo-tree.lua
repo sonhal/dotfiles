@@ -14,7 +14,17 @@ return {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
+    -- document_symbols is an LSP outline of the current file, shown as its own tab
+    sources = { 'filesystem', 'buffers', 'git_status', 'document_symbols' },
+    -- Tabs at the top of the window for switching between the sources above (or use < and >)
+    source_selector = {
+      winbar = true,
+    },
     filesystem = {
+      -- Keep the tree in sync with the file you are editing
+      follow_current_file = { enabled = true },
+      -- Collapse chains of single-child directories into one row (e.g. src/main/java/com/foo)
+      group_empty_dirs = true,
       window = {
         mappings = {
           ['\\'] = 'close_window',
