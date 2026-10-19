@@ -26,6 +26,7 @@ pcall(require, "monitors")
 ---------------------
 
 local terminal    = "kitty"
+local terminalTmux = terminal .. " -e tmux new-session -A -s main" -- attach to "main", create it if missing
 local fileManager = "thunar"
 local menu        = "rofi -show drun -show-icons"
 local browser     = "firefox"
@@ -216,7 +217,8 @@ hl.bind(mainMod .. " + G",         hl.dsp.exec_cmd(messenger), { description = "
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("rofi -modi clipboard:~/.config/rofi/cliphist-rofi-img -show clipboard -show-icons"), { description = "Clipboard history" })
 
 -- See https://wiki.hypr.land/configuring/core/binds/ for more
-hl.bind(mainMod .. " + return",    hl.dsp.exec_cmd(terminal), { description = "Terminal" })
+hl.bind(mainMod .. " + return",         hl.dsp.exec_cmd(terminalTmux), { description = "Terminal (tmux session main)" })
+hl.bind(mainMod .. " + SHIFT + return", hl.dsp.exec_cmd(terminal), { description = "Terminal (plain)" })
 hl.bind(mainMod .. " + C",         hl.dsp.window.close(), { description = "Close window" })
 hl.bind(mainMod .. " + M",         hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"), { description = "Exit Hyprland" })
 hl.bind(mainMod .. " + E",         hl.dsp.exec_cmd(fileManager), { description = "File manager" })
