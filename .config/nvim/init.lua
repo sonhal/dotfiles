@@ -417,18 +417,76 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+
+      -- Search hidden files so project config like .github/, .gitlab-ci.yml,
+      -- .devcontainer/, .vscode/, .cargo/, .mvn/ and .golangci.yml shows up.
+      -- .gitignore is still respected; these are the hidden dirs that are noise
+      -- even when a project forgets to ignore them.
+      local hidden_noise = {
+        '.git',
+        '.venv',
+        '.tox',
+        '.nox',
+        '.mypy_cache',
+        '.pytest_cache',
+        '.ruff_cache',
+        '.hypothesis',
+        '.ipynb_checkpoints',
+        '.eggs',
+        '.gradle',
+        '.m2',
+        '.idea',
+        '.cache',
+        '.direnv',
+        '.terraform',
+        '.next',
+        '.nuxt',
+        '.svelte-kit',
+        '.turbo',
+        '.yarn',
+        '.pnpm-store',
+      }
+
+      local rg_excludes = {}
+      for _, dir in ipairs(hidden_noise) do
+        vim.list_extend(rg_excludes, { '--glob', '!**/' .. dir .. '/*' })
+      end
+
+      local find_command
+      local fd = vim.fn.executable 'fd' == 1 and 'fd' or vim.fn.executable 'fdfind' == 1 and 'fdfind' or nil
+      if fd then
+        find_command = { fd, '--type', 'f', '--color', 'never', '--hidden' }
+        for _, dir in ipairs(hidden_noise) do
+          vim.list_extend(find_command, { '--exclude', dir })
+        end
+      else
+        find_command = vim.list_extend({ 'rg', '--files', '--color', 'never', '--hidden' }, rg_excludes)
+      end
+
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          -- Used by live_grep and grep_string. The first six are Telescope's defaults.
+          vimgrep_arguments = vim.list_extend({
+            'rg',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            '--hidden',
+          }, rg_excludes),
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+        },
         pickers = {
           find_files = {
             follow = true,
+            find_command = find_command,
           },
         },
         extensions = {
