@@ -253,6 +253,8 @@ hl.bind(mainMod .. " + Tab", hl.dsp.focus({ last = true }), { description = "Las
 
 -- Move focus with mainMod + arrow keys / vim keys
 -- Move active window inside workspace with mainMod + SHIFT + vim keys
+-- Same with CTRL added for monitors: mainMod + CTRL + vim keys focuses the
+-- monitor in that direction, mainMod + CTRL + SHIFT + vim keys moves the window there
 local directions = {
     { keys = { "left", "h" },  direction = "left" },
     { keys = { "right", "l" }, direction = "right" },
@@ -264,6 +266,8 @@ for _, d in ipairs(directions) do
         hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = d.direction }), { description = "Focus " .. d.direction })
     end
     hl.bind(mainMod .. " + SHIFT + " .. d.keys[2], hl.dsp.window.swap({ direction = d.direction }), { description = "Swap window " .. d.direction })
+    hl.bind(mainMod .. " + CTRL + " .. d.keys[2],         hl.dsp.focus({ monitor = d.direction }),       { description = "Focus monitor " .. d.direction })
+    hl.bind(mainMod .. " + CTRL + SHIFT + " .. d.keys[2], hl.dsp.window.move({ monitor = d.direction }), { description = "Move window to monitor " .. d.direction })
 end
 
 -- Resize mode: mainMod + R, then hjkl / arrows, Escape or Return to leave
