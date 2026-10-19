@@ -45,7 +45,7 @@ jq -nc --arg ns "$NETNS" --arg if "$IFACE" \
         class: "down",
         tooltip: "WireGuard netns: \($problem)\n\($isolated),\nso this namespace has no way out (fails closed)"
       } else {
-        text: "\($if) ",
+        text: "VPN up ",
         class: "up",
         tooltip: ([
             "WireGuard netns: all traffic goes through \($if)",
