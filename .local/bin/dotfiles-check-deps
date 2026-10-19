@@ -62,7 +62,7 @@ rofi|rofi|launcher, clipboard, keybinds
 cliphist|cliphist|clipboard history
 wl-paste|wl-clipboard|clipboard history
 hyprshot|hyprshot|screenshots
-jq|jq|keybind cheatsheet, waybar routes
+jq|jq|keybind cheatsheet, waybar routes and wg-netns
 notify-send|libnotify|waybar battery alerts
 wpctl|wireplumber|volume keys, waybar volume
 playerctl|playerctl|media keys

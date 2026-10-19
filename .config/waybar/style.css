@@ -58,6 +58,7 @@ window#waybar {
 #battery,
 #network,
 #custom-routes,
+#custom-wg-netns,
 #wireplumber,
 #clock,
 #memory,
@@ -81,6 +82,7 @@ window#waybar {
 #battery:hover,
 #network:hover,
 #custom-routes:hover,
+#custom-wg-netns:hover,
 #wireplumber:hover,
 #clock:hover,
 #memory:hover,
@@ -109,6 +111,7 @@ tooltip label {
 
 #battery.critical:not(.charging),
 #temperature.critical,
+#custom-wg-netns.down,
 #systemd-failed-units {
   color: @urgent;
 }

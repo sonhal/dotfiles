@@ -22,6 +22,7 @@
         "idle_inhibitor",
         "wireplumber",
         "network",
+        "custom/wg-netns",
         "custom/routes",
         "power-profiles-daemon",
         "cpu",
@@ -166,6 +167,13 @@
         "balanced": "",
         "power-saver": ""
       }
+    },
+    // WireGuard in the netns setup (wireguard.com/netns): shows while namespace "physical" exists,
+    // warns when wg0 is missing, down or not the default route. Hidden otherwise.
+    "custom/wg-netns": {
+        "exec": "$HOME/.local/bin/waybar-wg-netns physical wg0",
+        "return-type": "json",
+        "interval": 5
     },
     // Hover to list every interface with IPv4 routes (all routing tables), skipping
     // container/VM bridges. Default routes show their gateway and metric.
