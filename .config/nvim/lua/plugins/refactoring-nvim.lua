@@ -28,7 +28,7 @@ return {
     {
       '<leader>rI',
       ':Refactor inline_func ',
-      desc = 'Extract inline function',
+      desc = 'Inline function',
       mode = { 'n' },
     },
     {
@@ -38,7 +38,7 @@ return {
       mode = { 'n' },
     },
     {
-      '<leader>rbf',
+      '<leader>rB',
       ':Refactor extract_block_to_file ',
       desc = 'Extract block to file',
       mode = { 'n' },
