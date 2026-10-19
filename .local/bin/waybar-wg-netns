@@ -2,7 +2,7 @@
 # Waybar status for WireGuard in the network namespace setup from https://www.wireguard.com/netns/:
 # the physical interfaces live in namespace NETNS and only IFACE is left in the init namespace.
 # Usage: waybar-wg-netns [netns] [iface]   (defaults: physical wg0)
-# Prints nothing (module hidden) when the namespace doesn't exist.
+# Prints nothing (module hidden) unless that setup is in use, so it's safe on every machine.
 #
 # Unprivileged on purpose: reads /run/netns and the init namespace's links and routes only.
 # The handshake (`wg show` needs CAP_NET_ADMIN) and the uplink inside the namespace
@@ -13,6 +13,14 @@ IFACE=${2:-wg0}
 
 # `ip netns add` creates this file; it stays until `ip netns delete`
 [ -e "/run/netns/$NETNS" ] || exit 0
+
+# A same-named namespace used for something else: no tunnel here and the hardware NICs
+# (the only links with a device/ in sysfs) were never moved out of the init namespace
+if [ ! -e "/sys/class/net/$IFACE" ]; then
+    for dev in /sys/class/net/*/device; do
+        [ -e "$dev" ] && exit 0
+    done
+fi
 
 # Missing interface → empty arrays, reported as down below
 link=$(ip -j -s link show dev "$IFACE" 2>/dev/null) || link='[]'
