@@ -14,6 +14,8 @@ bindkey -v
 bindkey '^R' history-incremental-search-backward
 bindkey -v '^?' backward-delete-char
 # End of lines configured by zsh-newuser-install
+KEYTIMEOUT=1 # 10ms wait after Esc in vi mode instead of the default 400ms
+[[ -t 0 ]] && stty -ixon   # free Ctrl-S (tmux prefix) from XON/XOFF flow control so it can't freeze the terminal
 # The following lines were added by compinstall
 zstyle :compinstall filename "${HOME}/.zshrc"
 
