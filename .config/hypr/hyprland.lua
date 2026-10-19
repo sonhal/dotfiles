@@ -178,8 +178,12 @@ hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 7,    bezier = "q
 
 hl.config({
     input = {
-        kb_layout  = "us,no",
-        kb_options = "grp:alt_shift_toggle",
+        -- One layout: plain US keys for code and shortcuts, with Norwegian
+        -- letters on Right Alt (AltGr): AltGr+w = å, AltGr+z = æ, AltGr+l = ø
+        -- (add Shift for capitals). Replaces switching between us and no, which
+        -- lost < and > on ANSI keyboards and flipped layout on any Alt+Shift.
+        kb_layout  = "us",
+        kb_variant = "altgr-intl",
 
         follow_mouse = 1,
 

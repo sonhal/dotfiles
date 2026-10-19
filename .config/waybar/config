@@ -30,7 +30,6 @@
         "backlight",
         "custom/numlock",
         "custom/capslock",
-        "hyprland/language",
         "battery",
         "clock",
         "tray",
@@ -206,10 +205,5 @@
 			"suspend": "systemctl suspend",
 			"hibernate": "systemctl hibernate"
 		}
-    },
-    "hyprland/language": {
-	"format": "{}",
-	"format-en": "US",
-	"format-no": "NO"
     }
 }
