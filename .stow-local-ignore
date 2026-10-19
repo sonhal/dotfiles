@@ -1,0 +1,12 @@
+# Replaces stow's built-in ignore list, so its defaults are repeated here.
+\.git
+\.gitignore
+\.gitmodules
+^/README.*
+^/LICENSE.*
+.+~
+\#.*\#
+
+# Stow options for this repo; linked into ~ it would apply to every stow run.
+^/\.stowrc
+^/\.stow-local-ignore

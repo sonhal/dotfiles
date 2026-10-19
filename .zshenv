@@ -11,4 +11,4 @@ export PATH=$PATH:$HOME/.npm-packages/bin
 
 export EDITOR="nvim"
 export VISUAL="nvim"
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

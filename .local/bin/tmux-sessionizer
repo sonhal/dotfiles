@@ -2,12 +2,13 @@
 # Pick a project with fzf and switch to its tmux session, creating the
 # session (started in the project folder) if it doesn't exist yet.
 #
-#   sessionizer.sh        pick from the list
-#   sessionizer.sh DIR    skip the picker and use DIR
+#   tmux-sessionizer        pick from the list
+#   tmux-sessionizer DIR    skip the picker and use DIR
 #
 # Projects: the dotfiles repo and every folder directly in the XDG
 # projects dir (XDG_PROJECTS_DIR in ~/.config/user-dirs.dirs, set per
-# machine). A folder there that isn't a project itself 
+# machine). A folder there that isn't a project itself is treated as a
+# group and its subfolders are listed too.
 set -euo pipefail
 
 # xdg-user-dir prints $HOME when the entry is missing.
@@ -18,7 +19,7 @@ if [[ -z $root || $root == "$HOME" || ! -d $root ]]; then
   exit 1
 fi
 
-# The repo this script lives in (~/.config/tmux links into it).
+# The repo this script lives in (stow links it into ~/.local/bin).
 dotfiles=$(git -C "$(dirname "$(realpath "$0")")" rev-parse --show-toplevel 2>/dev/null || true)
 
 markers=(.git package.json go.mod build.gradle build.gradle.kts settings.gradle.kts pyproject.toml Cargo.toml)

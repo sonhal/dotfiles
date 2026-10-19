@@ -5,14 +5,17 @@ Intended for an Arch linux install with hyprland.
 
 ## Install
 
-Clone into the home folder and stow the whole repo as one package (`README.md` and `.gitignore`
-are skipped by stow's default ignore list):
+Clone the repo anywhere and stow it as one package from inside it. `.stowrc` sets the target to
+`~`, and `.stow-local-ignore` keeps `README.md`, `.gitignore` and the stow files themselves out of
+the home folder (a linked `~/.stowrc` would apply to every stow run).
 
 ```sh
 git clone <repo> ~/dotfiles
 mkdir -p ~/.config ~/.local/bin
 cd ~/dotfiles && stow .
 ```
+
+`stow -D .` removes the links again; `stow -R .` restows after adding or removing files.
 
 Create `~/.config` and `~/.local/bin` first: stow links a folder that doesn't exist yet as a
 single symlink ("tree folding"), so without them `~/.config` or `~/.local` would point into the
@@ -161,8 +164,8 @@ Config in `.config/tmux/`; symlink the folder into `~/.config`. Prefix is `C-s`.
 
 ### Sessionizer
 
-`prefix f` (or `t` in the shell) picks a project with fzf and switches to its session, creating
-it if needed. It lists the dotfiles repo and the folders in the XDG projects dir; a folder there
+`tmux-sessionizer` (in `.local/bin`; `prefix f` in tmux, or `t` in the shell) picks a project
+with fzf and switches to its session, creating it if needed. It lists the dotfiles repo and the folders in the XDG projects dir; a folder there
 without `.git` or a build file is treated as a group and its subfolders are listed too.
 
 The projects dir is per machine (`~/.config/user-dirs.dirs`, not tracked). Point it at wherever
