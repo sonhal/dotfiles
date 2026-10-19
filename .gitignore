@@ -1,2 +1,6 @@
 # Per-machine: absolute home paths, generated at Hyprland start
 .config/gtk-3.0/bookmarks
+
+# If ~/.local didn't exist when stowing, stow links the whole folder here; keep app data out
+/.local/*
+!/.local/bin/

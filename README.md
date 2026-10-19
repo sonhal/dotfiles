@@ -3,8 +3,28 @@
 ## Note
 Intended for an Arch linux install with hyprland.
 
-Run `./check.sh` to see if the fonts and packages the configs expect are installed; `./check.sh --kitty` also
-starts kitty briefly to check which font it actually loads.
+## Install
+
+Clone into the home folder and stow the whole repo as one package (`README.md` and `.gitignore`
+are skipped by stow's default ignore list):
+
+```sh
+git clone <repo> ~/dotfiles
+mkdir -p ~/.config ~/.local/bin
+cd ~/dotfiles && stow .
+```
+
+Create `~/.config` and `~/.local/bin` first: stow links a folder that doesn't exist yet as a
+single symlink ("tree folding"), so without them `~/.config` or `~/.local` would point into the
+repo and every app's config/data would be written there. Folders below `~/.config` are fine to
+fold (nvim, gtk-3.0 etc. rely on it so app writes land in the repo).
+
+## Checking dependencies
+
+`dotfiles-check-deps` (in `.local/bin`, on `PATH` via `.zshenv`) checks that the fonts and
+packages the configs expect are installed; `dotfiles-check-deps --kitty` also starts kitty
+briefly to check which font it actually loads. Before stowing, run it as
+`./.local/bin/dotfiles-check-deps`.
 
 
 ## Login
