@@ -24,9 +24,6 @@ compinit
 # Add custom aliases to shell
 source ${XDG_CONFIG_HOME}/zsh_aliases
 
-# locally install npm -g
-export PATH="$HOME/.npm-global/bin:$PATH"
-
 # -----------------------
 # Source plugins
 # -----------------------
