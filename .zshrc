@@ -15,13 +15,12 @@ bindkey '^R' history-incremental-search-backward
 bindkey -v '^?' backward-delete-char
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '${HOME}/.zshrc'
+zstyle :compinstall filename "${HOME}/.zshrc"
 
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-export XDG_CONFIG_HOME=${HOME}/.config/
 # Add custom aliases to shell
 source ${XDG_CONFIG_HOME}/zsh_aliases
 
@@ -55,5 +54,5 @@ eval "$(starship init zsh)"
 
 # ssh-agent via keychain — prompts once per login, reused across shells
 if command -v keychain >/dev/null 2>&1; then
-  eval "$(keychain --eval --quiet  )"
+  eval "$(keychain --eval --quiet id_ed25519)"
 fi
