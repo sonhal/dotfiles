@@ -1,6 +1,6 @@
 #!/bin/sh
 # Checks that the fonts and packages the configs in this repo expect are installed.
-# Usage: ./check.sh [--kitty]
+# Usage: dotfiles-check-deps [--kitty]
 #   --kitty  also start kitty briefly and check which font it actually loads
 # Exits non-zero if anything is missing.
 
@@ -132,7 +132,8 @@ check_font() {
 
 # Starts kitty with the repo's config and compares the loaded regular font to font_family.
 check_kitty() {
-  conf="$(dirname "$(realpath "$0")")/.config/kitty/kitty.conf"
+  # realpath follows the stow symlink back into the repo (<repo>/.local/bin/this-script)
+  conf="$(dirname "$(realpath "$0")")/../../.config/kitty/kitty.conf"
   want=$(sed -n 's/^font_family.*family="\([^"]*\)".*/\1/p' "$conf")
   log=$(timeout 15 kitty --config "$conf" --debug-font-fallback sh -c 'sleep 1' 2>&1)
   file=$(printf '%s\n' "$log" | sed -n 's/.*Normal: [^:]*: \(.*\):[0-9]*$/\1/p' | head -1)
