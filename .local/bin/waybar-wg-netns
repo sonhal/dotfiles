@@ -1,0 +1,49 @@
+#!/bin/sh
+# Waybar status for WireGuard in the network namespace setup from https://www.wireguard.com/netns/:
+# the physical interfaces live in namespace NETNS and only IFACE is left in the init namespace.
+# Usage: waybar-wg-netns [netns] [iface]   (defaults: physical wg0)
+# Prints nothing (module hidden) when the namespace doesn't exist.
+#
+# Unprivileged on purpose: reads /run/netns and the init namespace's links and routes only.
+# The handshake (`wg show` needs CAP_NET_ADMIN) and the uplink inside the namespace
+# (`ip netns exec` needs CAP_SYS_ADMIN) need root, so they aren't shown.
+
+NETNS=${1:-physical}
+IFACE=${2:-wg0}
+
+# `ip netns add` creates this file; it stays until `ip netns delete`
+[ -e "/run/netns/$NETNS" ] || exit 0
+
+# Missing interface → empty arrays, reported as down below
+link=$(ip -j -s link show dev "$IFACE" 2>/dev/null) || link='[]'
+addr=$(ip -j addr show dev "$IFACE" 2>/dev/null) || addr='[]'
+routes=$(ip -j route show default table all 2>/dev/null) || routes='[]'
+
+jq -nc --arg ns "$NETNS" --arg if "$IFACE" \
+    --argjson link "$link" --argjson addr "$addr" --argjson routes "$routes" '
+    def human: if . < 1024 then "\(.) B"
+        else [., 0] | until(.[0] < 1024 or .[1] == 4; [.[0] / 1024, .[1] + 1])
+            | "\(.[0] * 10 | round / 10) \(["B", "KiB", "MiB", "GiB", "TiB"][.[1]])" end;
+    ($link[0] // null) as $l
+    | ([$addr[0].addr_info[]? | "\(.local)/\(.prefixlen)"]) as $ips
+    | ([$routes[] | select(.dev == $if)] | length > 0) as $default
+    | (if $l == null then "\($if) does not exist"
+        elif ($l.flags | index("UP") | not) then "\($if) is down"
+        elif ($default | not) then "no default route via \($if)"
+        else null end) as $problem
+    | "Physical interfaces are isolated in namespace \"\($ns)\"" as $isolated
+    | if $problem then {
+        text: "VPN down ⚠",
+        class: "down",
+        tooltip: "WireGuard netns: \($problem)\n\($isolated),\nso this namespace has no way out (fails closed)"
+      } else {
+        text: "\($if) ",
+        class: "up",
+        tooltip: ([
+            "WireGuard netns: all traffic goes through \($if)",
+            "Address: \(if $ips == [] then "none" else $ips | join(", ") end)",
+            $isolated,
+            "Received \($l.stats64.rx.bytes | human), sent \($l.stats64.tx.bytes | human)",
+            "Handshake and uplink need root, not shown"
+          ] | join("\n"))
+      } end'
