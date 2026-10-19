@@ -590,6 +590,11 @@ require('lazy').setup({
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
+          -- Call hierarchy: who calls the function under your cursor, and what it calls.
+          --  Useful for tracing how modules connect when exploring a new codebase.
+          map('grI', require('telescope.builtin').lsp_incoming_calls, '[G]oto [I]ncoming Calls')
+          map('grO', require('telescope.builtin').lsp_outgoing_calls, '[G]oto [O]utgoing Calls')
+
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
