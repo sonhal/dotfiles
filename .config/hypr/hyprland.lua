@@ -184,6 +184,9 @@ hl.config({
         -- lost < and > on ANSI keyboards and flipped layout on any Alt+Shift.
         kb_layout  = "us",
         kb_variant = "altgr-intl",
+        -- Caps Lock is another Ctrl: home row instead of the bottom corner,
+        -- for tmux's C-s prefix, C-hjkl pane moves and Neovim's Ctrl keys.
+        kb_options = "ctrl:nocaps",
 
         follow_mouse = 1,
 
