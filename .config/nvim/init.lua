@@ -1120,9 +1120,33 @@ require('lazy').setup({
         },
         -- Darker "Nordic Darker" background, matching kitty
         on_colors = function(colors) colors.polar_night.origin = '#242933' end,
-        -- Nord draws inlay hints in nord3 (~2:1 on this background), too faint to read.
-        -- This grey-blue is readable (~4.9:1) but still dimmer than real code.
-        on_highlights = function(highlights) highlights.LspInlayHint = { fg = '#8A96AD' } end,
+        -- Nord is low contrast and colours most syntax in near-identical blues. Keep its keyword
+        -- and function colours, but give the unused Aurora accents to types, parameters,
+        -- constants and modules so they stand apart. Semantic tokens link to these groups.
+        on_highlights = function(hl, c)
+          -- Readable greys (~5.9:1 and ~4.9:1 on the background); hints are italic so they
+          -- don't read as comments
+          hl.Comment = { fg = '#9AA5BA' }
+          hl['@comment'] = { link = 'Comment' }
+          hl.LspInlayHint = { fg = '#8A96AD', italic = true }
+
+          for _, group in ipairs { 'Type', 'Typedef', 'Structure', '@type', '@type.builtin', '@type.definition', '@constructor' } do
+            hl[group] = { fg = c.aurora.yellow }
+          end
+          hl['@lsp.type.struct'] = { link = '@type' } -- Nord links this to an undefined group
+          hl['@lsp.type.typeParameter'] = { link = '@type' } -- Generics, Nord links these to parameters
+
+          hl['@variable.parameter'] = { fg = c.aurora.orange }
+
+          for _, group in ipairs { 'Constant', 'Boolean', '@constant', '@constant.builtin', '@boolean' } do
+            hl[group] = { fg = c.aurora.purple }
+          end
+
+          hl['@module'] = { fg = c.frost.polar_water }
+          hl['@attribute'] = { fg = c.frost.polar_water }
+          hl['@function.macro'] = { fg = c.frost.ice }
+          hl['@punctuation.bracket'] = { fg = c.snow_storm.origin }
+        end,
       }
 
       -- Load the colorscheme here.
