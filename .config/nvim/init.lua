@@ -1120,6 +1120,9 @@ require('lazy').setup({
         },
         -- Darker "Nordic Darker" background, matching kitty
         on_colors = function(colors) colors.polar_night.origin = '#242933' end,
+        -- Nord draws inlay hints in nord3 (~2:1 on this background), too faint to read.
+        -- This grey-blue is readable (~4.9:1) but still dimmer than real code.
+        on_highlights = function(highlights) highlights.LspInlayHint = { fg = '#8A96AD' } end,
       }
 
       -- Load the colorscheme here.
