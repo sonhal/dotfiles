@@ -1239,7 +1239,6 @@ require('lazy').setup({
         'requirements',
         'svelte',
         'terraform',
-        'tmux',
         'toml',
         'tsv',
         'typescript',
