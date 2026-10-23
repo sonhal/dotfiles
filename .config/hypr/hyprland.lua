@@ -187,7 +187,10 @@ hl.config({
         kb_variant = "altgr-intl",
         -- Caps Lock is another Ctrl: home row instead of the bottom corner,
         -- for tmux's C-s prefix, C-hjkl pane moves and Neovim's Ctrl keys.
-        kb_options = "ctrl:nocaps",
+        -- Left Alt and left Super swap places: Super sits next to Space under
+        -- the left thumb (like Cmd on a Mac), so SUPER binds keep the fingers
+        -- on the home row. Right Alt (AltGr) is untouched.
+        kb_options = "ctrl:nocaps,altwin:swap_lalt_lwin",
 
         follow_mouse = 1,
 
