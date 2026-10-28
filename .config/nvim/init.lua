@@ -567,6 +567,9 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
+
+      -- JSON/YAML schemas for jsonls and yamlls
+      'b0o/SchemaStore.nvim',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -692,7 +695,16 @@ require('lazy').setup({
             end, 'Toggle [I]nlay [H]ints')
 
             -- Enable inlay hints by default for these filetypes
-            local hint_filetypes = { python = true, go = true }
+            local hint_filetypes = {
+              python = true,
+              go = true,
+              rust = true,
+              javascript = true,
+              javascriptreact = true,
+              typescript = true,
+              typescriptreact = true,
+              vue = true,
+            }
             if hint_filetypes[vim.bo[event.buf].filetype] then
               vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
             end
@@ -738,6 +750,52 @@ require('lazy').setup({
       local servers = {
         -- jdtls is started by nvim-jdtls from ftplugin/java.lua, not lspconfig
         vue_ls = {},
+        html = {}, -- also covers inline <script> and <style> blocks
+        cssls = {},
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require('schemastore').json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
+        yamlls = {
+          settings = {
+            yaml = {
+              -- Use SchemaStore.nvim's catalogue instead of yamlls' built-in fetch
+              schemaStore = { enable = false, url = '' },
+              schemas = require('schemastore').yaml.schemas(),
+            },
+          },
+        },
+        bashls = {}, -- runs shellcheck for diagnostics
+        -- TOML schemas (Cargo.toml, pyproject.toml); formatting goes through conform
+        taplo = {
+          settings = {
+            evenBetterToml = {
+              schema = {
+                enabled = true,
+                -- taplo fails to parse the default online catalog, so map
+                -- SchemaStore.nvim's TOML file globs to schema URLs instead
+                catalogs = {},
+                associations = (function()
+                  local associations = {}
+                  for _, schema in ipairs(require('schemastore').json.schemas()) do
+                    for _, glob in ipairs(schema.fileMatch or {}) do
+                      if glob:match '%.toml$' then
+                        local pattern = vim.pesc(glob):gsub('%%%*%%%*/', '(.*/)?'):gsub('%%%*', '[^/]*')
+                        associations['(^|/)' .. pattern:gsub('%%', '\\') .. '$'] = schema.url
+                      end
+                    end
+                  end
+                  return associations
+                end)(),
+              },
+            },
+          },
+        },
+        hyprls = {},
         vtsls = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue' },
           settings = {
@@ -753,6 +811,21 @@ require('lazy').setup({
                     enableForWorkspaceTypeScriptVersions = true,
                   },
                 },
+              },
+            },
+            typescript = {
+              inlayHints = {
+                parameterNames = { enabled = 'literals' },
+                variableTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
+              },
+            },
+            javascript = {
+              inlayHints = {
+                parameterNames = { enabled = 'literals' },
+                variableTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
               },
             },
           },
@@ -946,6 +1019,9 @@ require('lazy').setup({
         'impl', -- Interface stub generation (gopher.nvim)
         'iferr', -- if err != nil generation (gopher.nvim)
         'gotests', -- Table-driven test generation (gopher.nvim)
+        'prettier', -- JSON and web formatter (conform)
+        'shellcheck', -- Shell diagnostics (bashls)
+        'shfmt', -- Shell formatter (conform)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1001,8 +1077,28 @@ require('lazy').setup({
         -- Conform can also run multiple formatters sequentially
         python = { 'ruff_fix', 'ruff_format' },
         go = { 'goimports', 'gofumpt' },
+        json = { 'prettier', 'jq', stop_after_first = true },
+        jsonc = { 'prettier' }, -- jq rejects comments
+        toml = { 'taplo' },
+        sh = { 'shfmt' },
+        bash = { 'shfmt' },
+        -- Web files use prettier only in projects with a prettier config,
+        -- otherwise the language server formats them
+        javascript = { 'prettier_project' },
+        javascriptreact = { 'prettier_project' },
+        typescript = { 'prettier_project' },
+        typescriptreact = { 'prettier_project' },
+        vue = { 'prettier_project' },
+        html = { 'prettier_project' },
+        css = { 'prettier_project' },
+        scss = { 'prettier_project' },
+        less = { 'prettier_project' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        -- Only runs when a .prettierrc (or similar) is found above the file
+        prettier_project = { inherit = 'prettier', require_cwd = true },
       },
     },
   },
